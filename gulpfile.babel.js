@@ -12,9 +12,10 @@ import pkg from './package.json';
 const $ = gulpLoadPlugins();
 const libFolder = 'lib';
 const libFile = pkg.library.name + '.js';
-const sources = './src/**/*.js';
+const sources = ['./src/**/*.js', ''];
 
 gulp.task('default', ['build']);
+
 gulp.task('watch', () => {
   gulp.watch(sources, ['lint', 'test'])
 })
@@ -26,6 +27,10 @@ gulp.task('build', ['lint'], () =>
     // Output files
     .pipe(gulp.dest(libFolder))
 );
+
+gulp.task('test', () =>
+  gulp.src()
+)
 
 // Lint javascript
 gulp.task('lint', () =>

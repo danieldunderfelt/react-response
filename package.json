@@ -64,5 +64,15 @@
   "library": {
     "name": "React-server",
     "entry": "./src/index.js"
+  },
+  "peerDependencies": {
+    "express": "^4.13.4",
+    "react": "^0.14.0",
+    "react-dom": "^0.14.0",
+    "react-router": "^2.0.0-rc5"
+  },
+  "dependencies": {
+    "compression": "^1.6.1",
+    "serve-favicon": "^2.3.0"
   }
 }
