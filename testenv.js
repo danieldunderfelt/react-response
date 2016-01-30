@@ -12,10 +12,3 @@ try {
 }
 
 require('babel-core/register')(config);
-
-if (!require('piping')({
-        hook: true,
-        ignore: /(\/\.|~$|\.json|\.scss$)/i
-    })) {
-    return
-}
