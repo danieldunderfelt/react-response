@@ -15,6 +15,9 @@ const libFile = pkg.library.name + '.js';
 const sources = './src/**/*.js';
 
 gulp.task('default', ['build']);
+gulp.task('watch', () => {
+  gulp.watch(sources, ['lint', 'test'])
+})
 
 // Build as a Node library
 gulp.task('build', ['lint'], () =>
