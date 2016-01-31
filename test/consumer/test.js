@@ -4,7 +4,7 @@ import { RouterContext } from 'react-router'
 import routes from './routes'
 import compression from 'compression'
 
-import Html from './helpers/Html'
+import Html from 'helpers/Html'
 
 import { ReactServer, Renderer, Response } from '../src'
 import { Middleware, Static, Favicon } from '../src/middleware'

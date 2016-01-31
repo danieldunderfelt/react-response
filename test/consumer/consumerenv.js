@@ -1,4 +1,4 @@
-require('../testenv')
+require('../helpers/testenv')
 
 if (!require('piping')({
         hook: true,

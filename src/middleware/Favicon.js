@@ -7,7 +7,7 @@ class Favicon extends React.Component {
     render() {
 
         return (
-            <Middleware use={serveFavicon(this.props.path)} />
+            <Middleware use={serveFavicon(this.props.path)}/>
         )
     }
 }

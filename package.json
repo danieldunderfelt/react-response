@@ -60,9 +60,12 @@
     "gulp-env": "^0.2.0",
     "gulp-eslint": "^1.1.1",
     "gulp-load-plugins": "^1.2.0",
+    "gulp-tape": "0.0.7",
     "gulp-util": "^3.0.6",
     "node-monkey": "^0.2.16",
-    "piping": "^0.3.0"
+    "piping": "^0.3.0",
+    "tap-colorize": "^1.2.0",
+    "tape": "^4.4.0"
   },
   "library": {
     "name": "React-server",

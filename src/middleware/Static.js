@@ -7,7 +7,7 @@ class Static extends React.Component {
     render() {
 
         return (
-            <Middleware use={Express.static(this.props.path)} />
+            <Middleware use={Express.static(this.props.path)}/>
         )
     }
 }

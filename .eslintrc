@@ -1,8 +1,11 @@
 {
   "parser": "babel-eslint",
   "extends": "airbnb",
+  "plugins": [
+    "react"
+  ],
   "env": {
-    "browser": true,
+    "browser": false,
     "es6": true,
     "node": true
   },
@@ -12,8 +15,11 @@
     "modules": true
   },
   "rules": {
-    "no-debugger":1,
+    "no-debugger": 0,
     "eqeqeq": 1,
+    "indent": [2, 4],
+    "padded-blocks": 0,
+    "comma-dangle": 0,
     "key-spacing": 0,
     "new-cap": 0,
     "strict": [2, "global"],
@@ -21,13 +27,19 @@
     "no-use-before-define": 0,
     "eol-last": 0,
     "quotes": 0,
-    "semi": 0,
+    "semi": [2, "never"],
     "space-infix-ops": 0,
     "no-trailing-spaces": 0,
     "no-multi-spaces": 0,
     "no-alert": 0,
     "no-undef": 2,
-    "no-unused-vars": [1, {"vars": "local", "args": "none"}]
+    "no-unused-vars": [1, {"vars": "local", "args": "none"}],
+    "react/jsx-boolean-value": 1,
+    "react/jsx-curly-spacing": [2, "always"],
+    "react/jsx-indent-props": [2, 4],
+    "react/prefer-es6-class": [1, "always"],
+    "react/jsx-uses-react": 1,
+    "react/jsx-uses-vars": 1
   },
   "globals" : {
     "document": false,
