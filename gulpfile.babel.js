@@ -7,7 +7,6 @@
 
 import gulp from 'gulp'
 import gulpLoadPlugins from 'gulp-load-plugins'
-import tapColorize from 'tap-colorize'
 
 const $ = gulpLoadPlugins()
 const libFolder = 'lib'
@@ -29,9 +28,7 @@ gulp.task('build', ['lint'], () =>
 
 gulp.task('test', () =>
     gulp.src('./test/*.js')
-        .pipe($.tape({
-            reporter: tapColorize()
-        }))
+        .pipe($.tape())
 )
 
 // Lint javascript

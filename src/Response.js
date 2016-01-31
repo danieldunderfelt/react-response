@@ -1,13 +1,16 @@
-import React from 'react'
+import { PropTypes, Component } from 'react'
+import invariant from 'invariant'
 
-class Response extends React.Component {
+class Response extends Component {
+
+    static propTypes = {
+        template: PropTypes.either(PropTypes.element, PropTypes.string).isRequired,
+        onRender: PropTypes.func,
+        children: PropTypes.func
+    };
 
     render() {
-
-        return {
-            props: this.props,
-            cb: this.props.children({}, {}, {})
-        }
+        invariant(false, "Contrary to generally-accepted semantics, a response is usually rendered. However, this one isn't.")
     }
 }
 

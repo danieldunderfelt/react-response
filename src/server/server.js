@@ -4,11 +4,12 @@ import ReactDOM from 'react-dom/server'
 import path from 'path'
 import PrettyError from 'pretty-error'
 import http from 'http'
+import https from 'https'
 import { match, RouterContext, createMemoryHistory } from 'react-router'
 
 const pretty = new PrettyError()
 const app = new Express()
-const server = new http.Server(app)
+const servers = { http, https }
 
 let serverConfig = {
     host: '0.0.0.0',
@@ -16,12 +17,12 @@ let serverConfig = {
     protocol: 'http'
 }
 
-export const addMiddleware = (middleware, path = '*') => {
-    app.use(path, middleware)
+export const addMiddleware = (middleware, route = '/') => {
+    app.use(route, middleware)
 }
 
-export const addRoute = (controller, method = 'get', path = '*') => {
-    app[method](path, controller)
+export const addRoute = (controller, route = '/', method = 'get') => {
+    app[method](route, controller)
 }
 
 export const addConfig = (cfg) => {
@@ -29,6 +30,9 @@ export const addConfig = (cfg) => {
 }
 
 export const runServer = () => {
+
+    const server = new (servers[serverConfig.protocol]).Server(app)
+
     if(serverConfig.port) {
         server.listen(serverConfig.port, serverConfig.host, (err) => {
             if(err) {

@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react'
 import invariant from 'invariant'
-import { addConfig } from './server/server'
+import { addConfig, runServer } from './server/server'
 
 class ReactServer extends Component {
 
@@ -8,18 +8,23 @@ class ReactServer extends Component {
         const { type, props } = serverConfig
         invariant(type.name === "ReactServer", "'serve' can only serve a ReactServer.")
 
-        function activateElement(childObj) {
-            childObj.buildServer(childObj)
-            childObj.props.children.forEach(el => activateElement(el))
+        const activateElement = childObj => {
+
+            // Return false from build fn to not traverse its children
+            if(typeof childObj.buildServer === 'function' && childObj.buildServer(childObj) !== false) {
+                childObj.props.children.forEach(el => activateElement(el))
+            }
         }
 
         activateElement(serverConfig)
+        runServer()
     }
 
     static propTypes = {
         host: PropTypes.string.isRequired,
         port: PropTypes.number.isRequired,
-        protocol: PropTypes.string
+        protocol: PropTypes.string,
+        children: PropTypes.arrayOf(PropTypes.object)
     };
 
     static defaultProps = {

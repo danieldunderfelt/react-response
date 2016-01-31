@@ -16,6 +16,7 @@
   },
   "rules": {
     "no-debugger": 0,
+    "no-console": 0,
     "eqeqeq": 1,
     "space-after-keywords": 0,
     "max-len": 0,
