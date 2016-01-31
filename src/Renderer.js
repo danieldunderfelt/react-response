@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 
 class Renderer extends React.Component {
+
+    static buildServer(obj) {
+
+    }
 
     render() {
 

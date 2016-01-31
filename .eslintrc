@@ -17,6 +17,8 @@
   "rules": {
     "no-debugger": 0,
     "eqeqeq": 1,
+    "space-after-keywords": 0,
+    "max-len": 0,
     "indent": [2, 4],
     "padded-blocks": 0,
     "comma-dangle": 0,
@@ -33,7 +35,7 @@
     "no-multi-spaces": 0,
     "no-alert": 0,
     "no-undef": 2,
-    "no-unused-vars": [1, {"vars": "local", "args": "none"}],
+    "no-unused-vars": 0,
     "react/jsx-boolean-value": 1,
     "react/jsx-curly-spacing": [2, "always"],
     "react/jsx-indent-props": [2, 4],
