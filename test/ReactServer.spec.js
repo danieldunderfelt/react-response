@@ -14,12 +14,12 @@ test('serve accepts only a ReactServer component', t => {
         <ReactServer
             serverBuilder={ sinon.stub() }
             runServer={ sinon.stub() }
-        >{ [<Null />] }</ReactServer>
+        ><Null /></ReactServer>
     )
 
     t.doesNotThrow(
         () => { ReactServer.serve(serverComp) },
-        new RegExp("Invariant Violation"),
+        /Invariant Violation/,
         'serve accepts a ReactServer.'
     )
 
@@ -30,9 +30,30 @@ test('serve accepts nothing else than a ReactServer component', t => {
 
     t.throws(
         () => { ReactServer.serve(<Null />) },
-        new RegExp("Invariant Violation"),
+        /Invariant Violation/,
         'serve accepts nothing else than a ReactServer.'
     )
+
+    t.end()
+})
+
+test('serve runs the server once build is done', t => {
+    const serverApi = { builder() {}, runner() {} }
+    const serverBuilder = sinon.spy(serverApi, "builder")
+    const serverRunner = sinon.spy(serverApi, "runner")
+
+    const serverComp = (
+        <ReactServer
+            serverBuilder={ serverApi.builder }
+            runServer={ serverApi.runner }>
+            <Null />
+        </ReactServer>
+    )
+
+    ReactServer.serve(serverComp)
+
+    t.ok(serverBuilder.withArgs(serverComp).calledOnce, "Server builder called.")
+    t.ok(serverRunner.calledAfter(serverBuilder), "Server runner called.")
 
     t.end()
 })

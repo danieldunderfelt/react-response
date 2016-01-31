@@ -7,6 +7,7 @@
 
 import gulp from 'gulp'
 import gulpLoadPlugins from 'gulp-load-plugins'
+import tapSpec from 'tap-spec'
 
 const $ = gulpLoadPlugins()
 const libFolder = 'lib'
@@ -14,7 +15,7 @@ const sources = './src/**/*.js'
 
 gulp.task('default', ['build'])
 
-gulp.task('watch', () => {
+gulp.task('watch', ['test'], () => {
     gulp.watch([sources, './test/*.js'], ['test'])
 })
 
@@ -26,10 +27,12 @@ gulp.task('build', ['lint'], () =>
         .pipe(gulp.dest(libFolder))
 )
 
-gulp.task('test', () =>
-    gulp.src('./test/*.js')
-        .pipe($.tape())
-)
+gulp.task('test', () => {
+    return gulp.src('./test/*.js')
+        .pipe($.tape({
+            reporter: tapSpec()
+        }).on('error', console.error.bind(console)))
+})
 
 // Lint javascript
 gulp.task('lint', () =>

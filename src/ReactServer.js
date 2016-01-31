@@ -8,9 +8,9 @@ class ReactServer extends Component {
     static propTypes = {
         host: PropTypes.string.isRequired,
         port: PropTypes.number.isRequired,
-        protocol: PropTypes.string,
         serverBuilder: PropTypes.func.isRequired,
         runServer: PropTypes.func.isRequired,
+        protocol: PropTypes.string,
         children: PropTypes.element
     };
 
