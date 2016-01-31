@@ -1,37 +1,35 @@
-import React, { PropTypes, Component } from 'react'
+import { PropTypes, Component } from 'react'
 import invariant from 'invariant'
 import { addConfig, runServer } from './server/server'
+import { serverBuilder } from './server/serverBuilder'
 
 class ReactServer extends Component {
-
-    static serve(serverConfig) {
-        const { type, props } = serverConfig
-        invariant(type.name === "ReactServer", "'serve' can only serve a ReactServer.")
-
-        const activateElement = childObj => {
-
-            // Return false from build fn to not traverse its children
-            if(typeof childObj.buildServer === 'function' && childObj.buildServer(childObj) !== false) {
-                childObj.props.children.forEach(el => activateElement(el))
-            }
-        }
-
-        activateElement(serverConfig)
-        runServer()
-    }
 
     static propTypes = {
         host: PropTypes.string.isRequired,
         port: PropTypes.number.isRequired,
         protocol: PropTypes.string,
-        children: PropTypes.arrayOf(PropTypes.object)
+        serverBuilder: PropTypes.func.isRequired,
+        runServer: PropTypes.func.isRequired,
+        children: PropTypes.element
     };
 
     static defaultProps = {
         host: '0.0.0.0',
         port: 3000,
-        protocol: 'http'
+        protocol: 'http',
+        serverBuilder,
+        runServer
     };
+
+    static serve(serverConfig) {
+        const { type, props } = serverConfig
+
+        invariant(type.name === "ReactServer", "serve can only serve a ReactServer.")
+
+        props.serverBuilder(serverConfig)
+        props.runServer()
+    }
 
     static buildServer(obj) {
         const { host, port, protocol } = obj.props

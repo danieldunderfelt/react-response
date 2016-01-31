@@ -64,7 +64,8 @@
     "gulp-util": "^3.0.6",
     "node-monkey": "^0.2.16",
     "piping": "^0.3.0",
-    "tap-colorize": "^1.2.0",
+    "sinon": "^1.17.3",
+    "tap-spec": "^4.1.1",
     "tape": "^4.4.0"
   },
   "library": {

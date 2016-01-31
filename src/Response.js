@@ -4,7 +4,7 @@ import invariant from 'invariant'
 class Response extends Component {
 
     static propTypes = {
-        template: PropTypes.either(PropTypes.element, PropTypes.string).isRequired,
+        template: PropTypes.oneOf(PropTypes.element, PropTypes.string).isRequired,
         onRender: PropTypes.func,
         children: PropTypes.func
     };
