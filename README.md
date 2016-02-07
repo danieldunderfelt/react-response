@@ -1,58 +1,87 @@
-ES6 library starter
-===========
+React server
+===
 
-[![Version](http://img.shields.io/npm/v/es6-library-minimal.svg)](https://www.npmjs.org/package/es6-library-minimal)
-[![Build Status](https://travis-ci.org/liady/es6-library-minimal.svg?branch=master)](https://travis-ci.org/liady/es6-library-minimal)
-[![Code style: airbnb](https://img.shields.io/badge/code%20style-airbnb-blue.svg?style=flat)](https://github.com/airbnb/javascript)
+React Server provides an easy-to-use server-side rendering server for React.
+The goal of this project is to partially remove ownership of the server itself from your project while maintaining a good level of customizability. This makes starting a new universally-rendered project much easier as you do not have to worry about setting up your server.
 
-A boilerplate for a universal (Node, web, UMD) ES6 library.
+The configuration of your React Server is done with familiar React components, kind of like React Router's route configuration. Almost all of the props have sensible defaults, so for the simplest apps you really don't have to do a lot to get a server running.
 
-## Quick usage
- 1. Clone this repo.
- 2. Change all relevant entries in `package.json` and `README.md`, so they match your new shiny library.
- 3. Run `npm install` to install dev dependencies.
- 4. Write your ES6 code in `src` folder.
- 5. Write your ES6 tests in `test` folder.
- 6. Run `npm build` to build for node. This will output the result ES5 files to `lib` folder.
- 7. Run `npm build-web` to build and pack the files for the web. This will output the result to `dist` folder.
- 8. Run `npm publish` to pulish to the world.
+> Production-ready stability is one of my end goals but we're still in the early days. Use in production at your own risk!
 
-## Detailed overview
+What's it look like?
+---
 
-### Installation
-After cloning this repository, make sure to change all the relevant entries in `package.json` so they match your library.
-```sh
-npm install
+Glad you asked. The simplest hello World with React Server looks like this:
+
+```
+import routes from './routes' // React-router routes
+import Html from './helpers/Html' // Your template component
+import { ReactServer, Template, Response, serve, createServer } from 'react-server'
+
+const server = createServer(
+    <ReactServer>
+        <Template component={ Html }>
+            <Response routes={ routes } />
+        </Template>
+    </ReactServer>
+)
+
+serve(server)
+
 ```
 
-### Build for npm
-```sh
-npm run build
+Compared to the novel you had to write (or copy-paste from a boilerplate) before, I'd say that's a pretty good improvement!
+
+As you may have noticed, the `<Response />` component consumes React Router routes. Yes, React Router is a peerDependency, along with React, React DOM and Express. I assume that most projects that need server-side rendering already uses React Router.
+
+> React Server is based on Express. If you're not using Express, rest assured that it is not suuuuper tightly coupled. I might eventually look at having interchangeable servers, but it is not a priority for now.
+
+That small example is all well and good for showing off, but next we'll have a look at how to customize React Server for your needs.
+
+### The full example
+
 ```
-This will:
- 1. Convert all files in `src` folder from ES6 to ES5
- 2. Output them to the `lib` folder
+import { RouterContext } from 'react-router' // Import if using a custom render function
+import routes from './routes' // React-router routes
+import Html from './helpers/Html' // Your template component
+import { ReactServer, Template, Route, Response, serve, createServer } from 'react-server'
+import { Middleware, Static, Favicon } from 'react-server/middleware'
 
-### Build for web
-```sh
-npm run build-web
+const server = createServer(
+    <ReactServer host="localhost" port={ 3000 } protocol="http">
+        <Route path="/" method="get">
+
+            // All the middlewares! React Server ships with some commonly used ones.
+            <Middleware use={ compression() }/>
+            <Favicon path={ path.join(__dirname, '..', 'static', 'favicon.ico') }/>
+            <Static path={ path.join(__dirname, '..', 'static') }/>
+
+            // Set your template component
+            <Template component={ Html }>
+                <Response routes={ routes }>
+                    // Custom render function for your Reduxes and whatnot
+                    {(renderProps, req, res) => {
+
+                        // Return props for the template component
+                        return { component: ReactDOM.renderToString(
+                            <RouterContext { ...renderProps } />
+                        ) }
+                    }}
+                </Response>
+            </Template>
+        </Route>
+        <Route path="/api"> // many routes
+            <Static path={ path.join(__dirname, '..', 'static') }/>
+        </Route>
+    </ReactServer>
+)
+
+serve(server)
+
 ```
-This will:
- 1. Run Webpack starting from the entry point file (`src/library.js`, can be configured)
- 2. Convert all files from ES6 to ES5
- 3. Minify them, **including all of their module dependencies** as a UMD module (so the file will be self-contained)
- 4. Output the file to the `dist` folder
 
-### Test
-```sh
-npm run test
-```
+Alright, this is more like it! As you can see, with React Server we attach middleware and app renderers to Routes, denoted by the `<Route />` component. This is, as we saw in the simple example, completely optional.
 
-### Configuration
-In `package.json`, change all the relevant entries so they match your library.<br/>
-Under the section `library`, you can configure:
- 1. Library name (defaults to `"library"`)
- 2. Webpack entry point (defaults to `src/library.js`)
+Express middleware is painless to use through the `<Middleware />` component. The middleware will be mounted on the route which the middleware component is a child of. Simply pass in a middleware function as the `use` prop. `Favicon` and `Static` middleware components ship with React Server. They are simply wrappers for the generic middleware component.
 
-## License
-MIT
+The `<Response />` component will handle rendering of React Router's `<RouterContext />` by default. If you need to render something else, for example Redux's `<Provider>`, pass a callback function as a child to `<Response />` and take care of it there.

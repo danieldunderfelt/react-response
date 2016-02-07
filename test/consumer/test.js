@@ -1,7 +1,9 @@
 import React from 'react'
+import ReactDOM from 'react-dom/server'
 import path from 'path'
 import routes from './routes'
 import compression from 'compression'
+import { RouterContext } from 'react-router'
 
 import Html from './helpers/Html'
 
@@ -17,7 +19,13 @@ const server = createServer(
             <Static path={ path.join(__dirname, 'helpers') }/>
 
             <Template component={ Html }>
-                <Response routes={ routes } />
+                <Response routes={ routes }>
+                    {(renderProps, req, res) => {
+                        return { component: ReactDOM.renderToString(
+                            <RouterContext { ...renderProps } />
+                        ) }
+                    }}
+                </Response>
             </Template>
         </Route>
         <Route path="/api">
