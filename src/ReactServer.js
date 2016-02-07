@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react'
 import invariant from 'invariant'
 import Express from 'express'
 import http from 'http'
+import https from 'https'
 
 class ReactServer extends Component {
 
@@ -9,24 +10,26 @@ class ReactServer extends Component {
         host: PropTypes.string.isRequired,
         port: PropTypes.number.isRequired,
         serverApp: PropTypes.func.isRequired,
-        server: PropTypes.func.isRequired
+        server: PropTypes.object.isRequired
     };
 
     static defaultProps = {
         host: '0.0.0.0',
         port: 3000,
-        server: http.Server,
+        protocol: 'http',
+        server: { http: http.Server, https: https.Server },
         serverApp: new Express()
     };
 
     static buildServer(props) {
-        const { server, serverApp, host, port, children } = props
+        const { server, serverApp, host, port, protocol, children } = props
 
-        const serverInstance = new server(serverApp)
+        const serverInstance = new (server[protocol])(serverApp)
 
         const config = {
             host,
-            port
+            port,
+            protocol
         }
 
         return {

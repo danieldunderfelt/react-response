@@ -17,7 +17,8 @@ test('buildServer returns formatted server config of ReactServers props', t => {
 
     const config = {
         host: 'localhost',
-        port: 4000
+        port: 4000,
+        protocol: 'http'
     }
 
     const el = (
@@ -39,16 +40,17 @@ test('buildServer returns correct default props', t => {
     const config = {
         config: {
             host: '0.0.0.0',
-            port: 3000
+            port: 3000,
+            protocol: 'http'
         },
-        server: {},
+        server: {} ,
         serverApp() {},
         children: <Null />
     }
 
-    // The server stuff is tested more below....
+    // The server stuff is tested more below. Nastily mocked for now.
     const el = (
-        <ReactServer serverApp={ config.serverApp } server={ class {} }>
+        <ReactServer serverApp={ config.serverApp } server={{ http: class {}, https: class {} }}>
             <Null />
         </ReactServer>
     )
@@ -70,7 +72,7 @@ test('buildServer instantiates the passed server', t => {
     const serverAppMock = sinon.spy(props, 'serverApp')
 
     const config = {
-        server: serverMock,
+        server: { http: serverMock, https: class {} },
         serverApp: serverAppMock
     }
 

@@ -11,6 +11,6 @@ export const runServer = (server, config) => {
             console.info(`==> 💻  Open ${config.protocol}://${config.host}:${config.port} in a browser to view the app.`)
         })
     } else {
-        console.error('==>     ERROR: No PORT environment variable has been specified')
+        console.error('==>     ERROR: No PORT variable has been specified')
     }
 }

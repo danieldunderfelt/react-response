@@ -7,7 +7,7 @@ export const createServer = (serverElement, parent = {}) => {
             {},
             parent,
             serverComponents,
-            { children: false }
+            { children: false } // It is not necessary to carry child React Elements here.
         )
 
         if(typeof serverComponents.children !== "undefined") {
