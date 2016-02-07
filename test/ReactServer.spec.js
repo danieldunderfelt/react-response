@@ -3,57 +3,62 @@ import React from 'react'
 import ReactServer from '../src/ReactServer'
 import Null from './helpers/Null'
 import sinon from 'sinon'
+import http from 'http'
+import Express from 'express'
 
-test('ReactServer exposes `serve`', t => {
-    t.equals(typeof ReactServer.serve, 'function', 'serve is exposed and a function.')
+test('buildServer exists', t => {
+    const el = <ReactServer />
+
+    t.equal(typeof el.type.buildServer, 'function', 'buildServer is a function.')
     t.end()
 })
 
-test('serve accepts only a ReactServer component', t => {
-    const serverComp = (
-        <ReactServer
-            serverBuilder={ sinon.stub() }
-            runServer={ sinon.stub() }
-        ><Null /></ReactServer>
-    )
+test('buildServer returns formatted server config of ReactServers props', t => {
 
-    t.doesNotThrow(
-        () => { ReactServer.serve(serverComp) },
-        /Invariant Violation/,
-        'serve accepts a ReactServer.'
-    )
+    const config = {
+        host: 'localhost',
+        port: 4000
+    }
 
-    t.end()
-})
-
-test('serve accepts nothing else than a ReactServer component', t => {
-
-    t.throws(
-        () => { ReactServer.serve(<Null />) },
-        /Invariant Violation/,
-        'serve accepts nothing else than a ReactServer.'
-    )
-
-    t.end()
-})
-
-test('serve runs the server once build is done', t => {
-    const serverApi = { builder() {}, runner() {} }
-    const serverBuilder = sinon.spy(serverApi, "builder")
-    const serverRunner = sinon.spy(serverApi, "runner")
-
-    const serverComp = (
-        <ReactServer
-            serverBuilder={ serverApi.builder }
-            runServer={ serverApi.runner }>
+    const el = (
+        <ReactServer { ...config }>
             <Null />
         </ReactServer>
     )
 
-    ReactServer.serve(serverComp)
+    const result = ReactServer.buildServer(el.props)
 
-    t.ok(serverBuilder.withArgs(serverComp).calledOnce, "Server builder called.")
-    t.ok(serverRunner.calledAfter(serverBuilder), "Server runner called.")
+    t.deepEqual(result.config, config, 'The server config is returned.')
+    t.deepEqual(result.children, <Null />, 'The children are included in the result.')
+
+    t.end()
+})
+
+test('buildServer instantiates the passed server', t => {
+    const props = {
+        server: http.Server,
+        serverApp: Express
+    }
+
+    const serverMock = sinon.spy(props, 'server')
+    const serverAppMock = sinon.spy(props, 'serverApp')
+
+    const config = {
+        server: serverMock,
+        serverApp: serverAppMock
+    }
+
+    const el = (
+        <ReactServer { ...config }>
+            <Null />
+        </ReactServer>
+    )
+
+    const result = ReactServer.buildServer(el.props)
+
+    t.ok(serverMock.calledWith(serverAppMock), 'The server was instantiated.')
+    t.ok(result.server instanceof serverMock, 'The server instance is returned')
+    t.deepEqual(result.serverApp, serverAppMock, 'The server app is returned')
 
     t.end()
 })
