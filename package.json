@@ -69,7 +69,7 @@
   },
   "library": {
     "name": "React-server",
-    "entry": "./src/index.js"
+    "entry": "index.js"
   },
   "peerDependencies": {
     "express": "^4.13.4",
@@ -79,7 +79,6 @@
   },
   "dependencies": {
     "compression": "^1.6.1",
-    "invariant": "^2.2.0",
     "pretty-error": "^2.0.0",
     "serve-favicon": "^2.3.0"
   }

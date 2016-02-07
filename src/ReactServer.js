@@ -1,5 +1,4 @@
 import React, { PropTypes, Component } from 'react'
-import invariant from 'invariant'
 import Express from 'express'
 import http from 'http'
 import https from 'https'

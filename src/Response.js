@@ -2,7 +2,6 @@ import React, { PropTypes, Component } from 'react'
 import ReactDOM from 'react-dom/server'
 import { RouterContext } from 'react-router'
 import { appMiddleware } from './server/appMiddleware'
-import invariant from 'invariant'
 
 class Response extends Component {
 

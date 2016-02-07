@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react'
-import invariant from 'invariant'
 
 class Middleware extends React.Component {
 

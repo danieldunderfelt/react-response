@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react'
 import Middleware from './Middleware'
 import path from 'path'
 import Express from 'express'
-import invariant from 'invariant'
 
 class Static extends React.Component {
 

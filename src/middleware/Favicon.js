@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react'
 import Middleware from './Middleware'
 import serveFavicon from 'serve-favicon'
 import path from 'path'
-import invariant from 'invariant'
 
 class Favicon extends React.Component {
 
