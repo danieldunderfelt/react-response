@@ -6,9 +6,8 @@
   "scripts": {
     "prepublish": "npm run build",
     "build": "gulp build",
-    "unit": "mocha --compilers js:babel-core/register --colors ./test/*.spec.js",
-    "unit-watch": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js",
-    "test": "npm run unit-watch"
+    "test-watch": "gulp watch",
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
