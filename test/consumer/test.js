@@ -1,33 +1,29 @@
 import React from 'react'
 import path from 'path'
-import { RouterContext } from 'react-router'
 import routes from './routes'
 import compression from 'compression'
 
 import Html from './helpers/Html'
 
-import { ReactServer, Renderer, Response } from '../../src'
+import { ReactServer, Template, Route, Response } from '../../src'
+import { serve, createServer } from '../../src/server'
 import { Middleware, Static, Favicon } from '../../src/middleware'
 
-ReactServer.serve(
-    <ReactServer host="localhost" port={ 3000 }>
-        <Middleware use={ compression() }/>
-        <Favicon path={ path.join(__dirname, '..', 'static', 'favicon.ico') }/>
-        <Static path={ path.join(__dirname, '..', 'static') }/>
+const server = createServer(
+    <ReactServer host="localhost" port={ 3000 } protocol="http">
+        <Route path="/" method="get">
+            <Middleware use={ compression() }/>
+            <Favicon path={ path.join(__dirname, 'helpers', 'favicon.ico') }/>
+            <Static path={ path.join(__dirname, 'helpers') }/>
 
-        <Renderer routes={ routes }>
-            <Response template={ Html }>
-                { renderApp }
-            </Response>
-        </Renderer>
+            <Template component={ Html }>
+                <Response routes={ routes } />
+            </Template>
+        </Route>
+        <Route path="/api">
+            <Static path={ path.join(__dirname, '..', 'static') }/>
+        </Route>
     </ReactServer>
 )
 
-function renderApp(renderProps, req, res) {
-
-    const component = (
-        <RouterContext { ...renderProps }  />
-    )
-
-    return { component }
-}
+serve(server)

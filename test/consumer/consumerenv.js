@@ -7,7 +7,7 @@ if (!require('piping')({
     return
 }
 
-var nomo = require('node-monkey').start(),
+/*var nomo = require('node-monkey').start(),
     bunyan = require('bunyan')
 
 var log = bunyan.createLogger({
@@ -18,6 +18,6 @@ var log = bunyan.createLogger({
             stream: nomo.stream
         }
     ]
-})
+})*/
 
 require('./test')

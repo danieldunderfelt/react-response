@@ -1,9 +1,11 @@
 import ReactServer from './ReactServer'
-import Renderer from './Renderer'
+import Template from './Template'
 import Response from './Response'
+import Route from './Route'
 
 export default {
     ReactServer,
-    Renderer,
-    Response
+    Template,
+    Response,
+    Route
 }

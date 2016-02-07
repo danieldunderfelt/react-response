@@ -11,16 +11,14 @@ class Favicon extends React.Component {
     };
 
     static defaultProps = {
-        path: path.join(__dirname, '..', 'static', 'favicon.ico')
+        path: ''
     };
 
-    static buildServer(obj) {
-        Middleware.buildServer(<Middleware use={ serveFavicon(obj.props.path) } />)
+    static buildServer(props, parent) {
+        return Middleware.buildServer({ use: serveFavicon(props.path) }, parent)
     }
 
-    render() {
-        invariant(false, "Was it worth it; rendering the Favicon component?")
-    }
+    render() {}
 }
 
 export default Favicon

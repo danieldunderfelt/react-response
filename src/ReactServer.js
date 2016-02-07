@@ -1,44 +1,48 @@
-import { PropTypes, Component } from 'react'
+import React, { PropTypes, Component } from 'react'
+import ReactDOM from 'react-dom/server'
 import invariant from 'invariant'
-import { addConfig, runServer } from './server/server'
-import { serverBuilder } from './server/serverBuilder'
+import Express from 'express'
+import http from 'http'
+import https from 'https'
 
 class ReactServer extends Component {
 
     static propTypes = {
         host: PropTypes.string.isRequired,
         port: PropTypes.number.isRequired,
-        serverBuilder: PropTypes.func.isRequired,
-        runServer: PropTypes.func.isRequired,
-        protocol: PropTypes.string,
-        children: PropTypes.element
+        serverApp: PropTypes.func.isRequired,
+        servers: PropTypes.object.isRequired,
+        protocol: PropTypes.string
     };
 
     static defaultProps = {
         host: '0.0.0.0',
         port: 3000,
         protocol: 'http',
-        serverBuilder,
-        runServer
+        servers: { http, https },
+        serverApp: new Express()
     };
 
-    static serve(serverConfig) {
-        const { type, props } = serverConfig
+    static buildServer(props) {
+        const { servers, protocol, serverApp, host, port, children } = props
 
-        invariant(type.name === "ReactServer", "serve can only serve a ReactServer.")
+        const server = new servers[protocol].Server(serverApp)
 
-        props.serverBuilder(serverConfig)
-        props.runServer()
+        const config = {
+            host,
+            port,
+            protocol
+        }
+
+        return {
+            server,
+            serverApp,
+            config,
+            children
+        }
     }
 
-    static buildServer(obj) {
-        const { host, port, protocol } = obj.props
-        addConfig({ host, port, protocol })
-    }
-
-    render() {
-        invariant(false, "'In Soviet Russia, YOU render the server!' ...no? Well anyway, it's not really productive to render the server.")
-    }
+    render() {}
 }
 
 export default ReactServer
