@@ -7,7 +7,14 @@ import invariant from 'invariant'
 class Response extends Component {
 
     static propTypes = {
-        routes: PropTypes.object.isRequired
+        routes: PropTypes.object.isRequired,
+        path: PropTypes.string.isRequired,
+        method: PropTypes.string.isRequired
+    };
+
+    static defaultProps = {
+        path: "/",
+        method: "get"
     };
 
     static buildServer(props, parent) {
@@ -23,7 +30,13 @@ class Response extends Component {
             renderFn
         )
 
-        const { route } = parent
+        let { route } = parent
+
+        // If using the simplest "Hello world" config, the route has not been set.
+        // Then we need the default props from this component.
+        if(typeof route === 'undefined') {
+            route = props
+        }
 
         parent.serverApp[route.method](route.path, responseHandler)
 
