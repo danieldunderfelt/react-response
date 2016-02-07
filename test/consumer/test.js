@@ -10,10 +10,19 @@ import { serve, createServer } from '../../src/server'
 import { Middleware, Static, Favicon } from '../../src/middleware'
 
 const server = createServer(
-    <ReactServer>
-        <Template component={ Html }>
-            <Response routes={ routes } />
-        </Template>
+    <ReactServer host="localhost" port={ 3000 } protocol="http">
+        <Route path="/" method="get">
+            <Middleware use={ compression() }/>
+            <Favicon path={ path.join(__dirname, 'helpers', 'favicon.ico') }/>
+            <Static path={ path.join(__dirname, 'helpers') }/>
+
+            <Template component={ Html }>
+                <Response routes={ routes } />
+            </Template>
+        </Route>
+        <Route path="/api">
+            <Static path={ path.join(__dirname, '..', 'static') }/>
+        </Route>
     </ReactServer>
 )
 
