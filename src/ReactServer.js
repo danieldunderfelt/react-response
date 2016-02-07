@@ -1,5 +1,4 @@
 import React, { PropTypes, Component } from 'react'
-import ReactDOM from 'react-dom/server'
 import invariant from 'invariant'
 import Express from 'express'
 import http from 'http'
@@ -10,7 +9,7 @@ class ReactServer extends Component {
         host: PropTypes.string.isRequired,
         port: PropTypes.number.isRequired,
         serverApp: PropTypes.func.isRequired,
-        servers: PropTypes.object.isRequired
+        server: PropTypes.func.isRequired
     };
 
     static defaultProps = {

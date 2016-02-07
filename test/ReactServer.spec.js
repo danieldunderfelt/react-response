@@ -9,7 +9,7 @@ import Express from 'express'
 test('buildServer exists', t => {
     const el = <ReactServer />
 
-    t.equal(typeof el.type.buildServer, 'function', 'buildServer is a function.')
+    t.equal(typeof el.type.buildServer, 'function', 'ReactServer.buildServer is a function.')
     t.end()
 })
 
@@ -30,6 +30,32 @@ test('buildServer returns formatted server config of ReactServers props', t => {
 
     t.deepEqual(result.config, config, 'The server config is returned.')
     t.deepEqual(result.children, <Null />, 'The children are included in the result.')
+
+    t.end()
+})
+
+test('buildServer returns correct default props', t => {
+
+    const config = {
+        config: {
+            host: '0.0.0.0',
+            port: 3000
+        },
+        server: {},
+        serverApp: true,
+        children: <Null />
+    }
+
+    // The server stuff is tested more below....
+    const el = (
+        <ReactServer serverApp={ true } server={ class {} }>
+            <Null />
+        </ReactServer>
+    )
+
+    const result = ReactServer.buildServer(el.props)
+
+    t.deepEqual(result, config, 'The default server config is returned.')
 
     t.end()
 })
