@@ -22,8 +22,6 @@ class Middleware extends React.Component {
             }
         }
     }
-
-    render() {}
 }
 
 export default Middleware

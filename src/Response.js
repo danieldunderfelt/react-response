@@ -53,10 +53,6 @@ class Response extends Component {
             <RouterContext { ...renderProps } />
         ) }
     }
-
-    render() {
-        invariant(false, "Contrary to generally-accepted semantics, a response is usually rendered. However, this one isn't.")
-    }
 }
 
 export default Response

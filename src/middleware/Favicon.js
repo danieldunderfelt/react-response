@@ -17,8 +17,6 @@ class Favicon extends React.Component {
     static buildServer(props, parent) {
         return Middleware.buildServer({ use: serveFavicon(props.path) }, parent)
     }
-
-    render() {}
 }
 
 export default Favicon

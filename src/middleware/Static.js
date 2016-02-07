@@ -17,8 +17,6 @@ class Static extends React.Component {
     static buildServer(props, parent) {
         return Middleware.buildServer({ use: Express.static(props.path) }, parent)
     }
-
-    render() {}
 }
 
 export default Static

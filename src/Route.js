@@ -22,8 +22,6 @@ class Route extends Component {
             children: props.children
         }
     }
-
-    render() {}
 }
 
 export default Route

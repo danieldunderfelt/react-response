@@ -41,8 +41,6 @@ class ReactServer extends Component {
             children
         }
     }
-
-    render() {}
 }
 
 export default ReactServer

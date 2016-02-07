@@ -14,10 +14,6 @@ class Template extends Component {
             children: props.children
         }
     }
-
-    render() {
-
-    }
 }
 
 export default Template
