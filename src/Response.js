@@ -9,25 +9,26 @@ class Response extends Component {
     static propTypes = {
         routes: PropTypes.object.isRequired,
         path: PropTypes.string.isRequired,
-        method: PropTypes.string.isRequired
+        method: PropTypes.string.isRequired,
+        children: PropTypes.func.isRequired,
+        appHandler: PropTypes.func.isRequired
     };
 
     static defaultProps = {
         path: "/",
-        method: "get"
+        method: "get",
+        children: Response.renderFn,
+        appHandler: appMiddleware
     };
 
     static buildServer(props, parent) {
-        let renderFn = Response.renderFn
 
-        if(typeof props.children === 'function') {
-            renderFn = props.children
-        }
+        const { appHandler, routes, children } = props
 
-        const responseHandler = appMiddleware(
-            props.routes,
+        const responseHandler = appHandler(
+            routes,
             parent.template.component,
-            renderFn
+            children
         )
 
         let { route } = parent

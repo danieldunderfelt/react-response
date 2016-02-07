@@ -7,8 +7,7 @@ import { RouterContext } from 'react-router'
 
 import Html from './helpers/Html'
 
-import { ReactServer, Template, Route, Response } from '../../src'
-import { serve, createServer } from '../../src/server'
+import { ReactServer, Template, Route, Response, serve, createServer } from '../../src'
 import { Middleware, Static, Favicon } from '../../src/middleware'
 
 const server = createServer(

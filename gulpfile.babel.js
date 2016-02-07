@@ -20,7 +20,7 @@ gulp.task('watch', ['test'], () => {
 })
 
 // Build as a Node library
-gulp.task('build', ['lint'], () =>
+gulp.task('build', ['lint', 'test'], () =>
     gulp.src(sources)
         .pipe($.babel())
         // Output files
