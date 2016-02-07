@@ -42,13 +42,13 @@ test('buildServer returns correct default props', t => {
             port: 3000
         },
         server: {},
-        serverApp: true,
+        serverApp() {},
         children: <Null />
     }
 
     // The server stuff is tested more below....
     const el = (
-        <ReactServer serverApp={ true } server={ class {} }>
+        <ReactServer serverApp={ config.serverApp } server={ class {} }>
             <Null />
         </ReactServer>
     )

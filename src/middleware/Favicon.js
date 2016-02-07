@@ -7,15 +7,16 @@ import invariant from 'invariant'
 class Favicon extends React.Component {
 
     static propTypes = {
-        path: PropTypes.string.isRequired
+        path: PropTypes.string.isRequired,
+        faviconMiddleware: PropTypes.func.isRequired
     };
 
     static defaultProps = {
-        path: ''
+        faviconMiddleware: serveFavicon
     };
 
     static buildServer(props, parent) {
-        return Middleware.buildServer({ use: serveFavicon(props.path) }, parent)
+        return Middleware.buildServer({ use: props.faviconMiddleware(props.path) }, parent)
     }
 }
 

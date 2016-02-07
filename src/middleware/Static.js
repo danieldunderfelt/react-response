@@ -7,15 +7,16 @@ import invariant from 'invariant'
 class Static extends React.Component {
 
     static propTypes = {
-        path: PropTypes.string.isRequired
+        path: PropTypes.string.isRequired,
+        staticMiddleware: PropTypes.func.isRequired
     };
 
     static defaultProps = {
-        path: ''
+        staticMiddleware: Express.static
     };
 
     static buildServer(props, parent) {
-        return Middleware.buildServer({ use: Express.static(props.path) }, parent)
+        return Middleware.buildServer({ use: props.staticMiddleware(props.path) }, parent)
     }
 }
 

@@ -37,6 +37,8 @@
     "no-multi-spaces": 0,
     "no-alert": 0,
     "no-undef": 2,
+    "func-names": 0,
+    "space-before-function-paren": [2, "never"],
     "no-unused-vars": 0,
     "react/jsx-boolean-value": 1,
     "react/jsx-curly-spacing": 0,
