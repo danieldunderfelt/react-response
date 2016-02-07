@@ -2,7 +2,7 @@
   "name": "react-server",
   "version": "0.0.1",
   "description": "React server-side rendering implementation with minimal configuration.",
-  "main": "./index.js",
+  "main": "./lib/index.js",
   "scripts": {
     "prepublish": "npm run build",
     "build": "gulp build",
@@ -68,7 +68,7 @@
     "tape": "^4.4.0"
   },
   "library": {
-    "name": "React-server",
+    "name": "react-server",
     "entry": "index.js"
   },
   "peerDependencies": {

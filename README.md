@@ -44,8 +44,7 @@ That small example is all well and good for showing off, but next we'll have a l
 import { RouterContext } from 'react-router' // Import if using a custom render function
 import routes from './routes' // React-router routes
 import Html from './helpers/Html' // Your template component
-import { ReactServer, Template, Route, Response, serve, createServer } from 'react-server'
-import { Middleware, Static, Favicon } from 'react-server/middleware'
+import { ReactServer, Template, Route, Response, serve, createServer, Middleware, Static, Favicon } from 'react-server'
 
 const server = createServer(
     <ReactServer host="localhost" port={ 3000 }>
