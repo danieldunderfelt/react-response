@@ -46,6 +46,8 @@ import routes from './routes' // React-router routes
 import Html from './helpers/Html' // Your template component
 import { ReactServer, Template, Route, Response, serve, createServer, Middleware, Static, Favicon } from 'react-server'
 
+/* Note that you need to install 'serve-favicon' and other middleware if you want to use them. */
+
 const server = createServer(
     <ReactServer host="localhost" port={ 3000 }>
         <Route path="/" method="get">
@@ -91,24 +93,36 @@ The whole React Server setup is fed into the `createServer` function. It travers
 
 ### A note on JSX
 
-I know that some developers are not fond of JSX and prefer vanilla Javascript. My decision to use JSX and even React components for server configuration is bound to raise eyebrows. For me it comes down to preference, usability and how it looks. React Server is all about easing the cognitive load of writing a server-side rendering server, so the last thing I wanted was a declarative and messy configuation.
+I know that some developers are not fond of JSX and prefer vanilla Javascript. My decision to use JSX and even React components for server configuration is bound to raise eyebrows. For me it comes down to preference, usability and how it looks. React Server is all about eliminating React boilerplate and easing the cognitive load of writing a server-side rendering server, so the last thing I wanted was a declarative and messy configuration.
 
 The very first thing I did with React Server was to design the user interface of the configuration. While the data is not naturally nested like React Router's routes, I feel that using JSX and React components to build the server configuration gives React Server a distinct "React identity". Rendering React components on the server should just be a matter of composing them into the server configuration. It is also very easy to see what is going on from a quick glance at the configuration tree, and in my opinion it is much better than plain Javascript objects.
 
 However, if you do not wish to use JSX, inspect the output of `createServer`. It should be rather simple to re-create that object structure without JSX. Note that the components, like `Middleware` and `Response`, directly apply middleware and handlers to the Express instance.
 
-Rest assured that I plan to fully support usage of React Server without React components, à la React Router. It just wasn't a priority for the first release.
+Rest assured that I plan to fully support usage of React Server without React components, à la React Router. It just isn't a priority for the first few releases.
 
 # Getting started
 
-First, install React Server and it peerDependencies:
-`npm install --save react react-dom react-router express react-server`
+First, install React Server:
+`npm install --save react-server`
 
-I do apologize for the number of dependencies. Its nothing that you aren't using already though.
+Make sure you have React Server's peerDependencies (react react-dom react-router express) installed. Also install any middleware you want to use through the components.
+
+I do apologize for the number of dependencies. Its propbably nothing that you aren't already using though.
 
 Then, follow one of the examples above to set up your server config. When done, feed the config to `createServer` and the output of `createServer` into `serve`.
 
-Before unleashing `node` on your server file, keep in mind that you need Babel to transpile the JSX. I suggest using `babel-core/register` to accomplish this if you do not have transpiling enabled for your server-side code.
+Before unleashing `node` on your server file, keep in mind that you need Babel to transpile the JSX. I suggest using `babel-core/register` to accomplish this if you do not have transpiling enabled for your server-side code. Like this:
+
+```
+// server.babel.js
+require('babel-core/register')
+require('server.js') // Your server file
+```
+
+Then run that file with Node.
+
+When run, React Server will output the URL where you can see your app in the console. By default that would be `http://localhost:3000`.
 
 # Future plans
 
@@ -117,10 +131,14 @@ This is but the very first release of React Server! Plans for the future include
 - Template engines like Jade and EJS
 - Option to use something else than Express
 - Add more `Response` components for the following needs:
-    - Without React Router
+    - Without a React Router dependency
     - Redux
     - Redux React Router
 - Production stability and more tests
+- Integrated reverse proxy for external APIs
+- Maybe a Relay server?
+- Your suggestions!
+- Other cool features
 
 # Components
 
