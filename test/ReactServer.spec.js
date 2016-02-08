@@ -35,33 +35,6 @@ test('buildServer returns formatted server config of ReactServers props', t => {
     t.end()
 })
 
-test('buildServer returns correct default props', t => {
-
-    const config = {
-        config: {
-            host: '0.0.0.0',
-            port: 3000,
-            protocol: 'http'
-        },
-        server: {} ,
-        serverApp() {},
-        children: <Null />
-    }
-
-    // The server stuff is tested more below. Nastily mocked for now.
-    const el = (
-        <ReactServer serverApp={ config.serverApp } server={{ http: class {}, https: class {} }}>
-            <Null />
-        </ReactServer>
-    )
-
-    const result = ReactServer.buildServer(el.props)
-
-    t.deepEqual(result, config, 'The default server config is returned.')
-
-    t.end()
-})
-
 test('buildServer instantiates the passed server', t => {
     const props = {
         server: http.Server,
@@ -85,6 +58,7 @@ test('buildServer instantiates the passed server', t => {
     const result = ReactServer.buildServer(el.props)
 
     t.ok(serverMock.calledWith(serverAppMock), 'The server was instantiated.')
+    t.ok(serverMock.calledOnce, 'The server was called once.')
     t.ok(result.server instanceof serverMock, 'The server instance is returned')
     t.deepEqual(result.serverApp, serverAppMock, 'The server app is returned')
 
