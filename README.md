@@ -20,7 +20,7 @@ What's it look like?
 
 Glad you asked. The simplest hello World with React-response looks like this:
 
-```
+```javascript
 import routes from './routes' // React-router routes
 import Html from './helpers/Html' // Your template component
 import { ReactServer, Template, Response, serve, createServer } from 'react-response'
@@ -47,7 +47,7 @@ That small example is all well and good for showing off, but next we'll have a l
 
 ### The full example
 
-```
+```javascript
 import { RouterContext } from 'react-router' // Import if using a custom render function
 import routes from './routes' // React-router routes
 import Html from './helpers/Html' // Your template component
@@ -121,7 +121,7 @@ Then, follow one of the examples above to set up your server config. When done, 
 
 Before unleashing `node` on your server file, keep in mind that you need Babel to transpile the JSX. I suggest using `babel-core/register` to accomplish this if you do not have transpiling enabled for your server-side code. Like this:
 
-```
+```javascript
 // server.babel.js
 require('babel-core/register')
 require('server.js') // Your server file
