@@ -1,22 +1,29 @@
-React server
+React-response
 ===
 
-React Server provides an easy-to-use server-side rendering server for React.
-The goal of this project is to partially remove ownership of the server itself from your project while maintaining a good level of customizability. This makes starting a new universally-rendered project much easier as you do not have to worry about setting up your server.
+React-response provides an easy-to-use server-side rendering server for React.
+The goal of this project is to reduce the boilerplate you need for a universal React project. Instead of copy-pasting a server from somewhere, React-response makes it possible to quickly write a production-ready server-side React renderer yourself. React-response also aims to maintain the customizability of a normal Express server because every app has different needs.
 
-The configuration of your React Server is done with familiar React components, kind of like React Router's route configuration. Almost all of the props have sensible defaults, so for the simplest apps you really don't have to do a lot to get a server running.
+The configuration of your React-response is done with familiar React components, kind of like React Router's route configuration. Almost all of the props have sensible defaults, so for the simplest apps you really don't have to do a lot to get a server running.
 
 > Production-ready stability is one of my end goals but we're still in the early days. Use in production at your own risk!
+
+Features
+---
+
+- A new way to implement SSR using familiar React concepts
+- A fully-featured Express server under the hood
+- Less boilerplate
 
 What's it look like?
 ---
 
-Glad you asked. The simplest hello World with React Server looks like this:
+Glad you asked. The simplest hello World with React-response looks like this:
 
 ```
 import routes from './routes' // React-router routes
 import Html from './helpers/Html' // Your template component
-import { ReactServer, Template, Response, serve, createServer } from 'react-server'
+import { ReactServer, Template, Response, serve, createServer } from 'react-response'
 
 const server = createServer(
     <ReactServer>
@@ -34,9 +41,9 @@ Compared to the novel you had to write (or copy-paste from a boilerplate) before
 
 As you may have noticed, the `<Response />` component consumes React Router routes. Yes, React Router is a peerDependency, along with React, React DOM and Express. I assume that most projects that need server-side rendering already uses React Router.
 
-> React Server is based on Express. If you're not using Express, rest assured that it is not suuuuper tightly coupled. I might eventually look at having interchangeable servers, but it is not a priority for now.
+> React-response is based on Express. If you're not using Express, rest assured that it is not suuuuper tightly coupled. I might eventually look at having interchangeable servers, but it is not a priority for now.
 
-That small example is all well and good for showing off, but next we'll have a look at how to customize React Server for your needs.
+That small example is all well and good for showing off, but next we'll have a look at how to customize React-response for your needs.
 
 ### The full example
 
@@ -44,7 +51,7 @@ That small example is all well and good for showing off, but next we'll have a l
 import { RouterContext } from 'react-router' // Import if using a custom render function
 import routes from './routes' // React-router routes
 import Html from './helpers/Html' // Your template component
-import { ReactServer, Template, Route, Response, serve, createServer, Middleware, Static, Favicon } from 'react-server'
+import { ReactServer, Template, Route, Response, serve, createServer, Middleware, Static, Favicon } from 'react-response'
 
 /* Note that you need to install 'serve-favicon' and other middleware if you want to use them. */
 
@@ -52,7 +59,7 @@ const server = createServer(
     <ReactServer host="localhost" port={ 3000 }>
         <Route path="/" method="get">
 
-            // All the middlewares! React Server ships with some commonly used ones.
+            // All the middlewares! React-response ships with some commonly used ones.
             <Middleware use={ compression() }/>
             <Favicon path={ path.join(__dirname, '..', 'static', 'favicon.ico') }/>
             <Static path={ path.join(__dirname, '..', 'static') }/>
@@ -81,32 +88,32 @@ serve(server)
 
 ```
 
-Alright, this is more like it! As you can see, with React Server we attach middleware and app renderers to Routes, denoted by the `<Route />` component. This is, as we saw in the simple example, completely optional.
+Alright, this is more like it! As you can see, with React-response we attach middleware and app renderers to Routes, denoted by the `<Route />` component. This is, as we saw in the simple example, completely optional.
 
-Express middleware is painless to use through the `<Middleware />` component. The middleware will be mounted on the route which the middleware component is a child of. Simply pass in a middleware function as the `use` prop. `Favicon` and `Static` middleware components ship with React Server. They are simple wrappers for the generic middleware component.
+Express middleware is painless to use through the `<Middleware />` component. The middleware will be mounted on the route which the middleware component is a child of. Simply pass in a middleware function as the `use` prop. `Favicon` and `Static` middleware components ship with React-response. They are simple wrappers for the generic middleware component.
 
 The `<Response />` component will handle rendering of React Router's `<RouterContext />` by default. If you need to render something else, for example Redux's `<Provider>`, pass a callback function as a child to `<Response />` and take care of it there. If you use a custom render function, it is your responsibility to render the React component to a string.
 
 The return value from your custom render function should be a map of props that will be applied to your template component. This makes the render function a convenient place to fetch data and create your Redux store.
 
-The whole React Server setup is fed into the `createServer` function. It traverses all the components and compiles a fully-featured Express server which you can feed to the `serve` function.
+The whole React-response setup is fed into the `createServer` function. It traverses all the components and compiles a fully-featured Express server which you can feed to the `serve` function.
 
 ### A note on JSX
 
-I know that some developers are not fond of JSX and prefer vanilla Javascript. My decision to use JSX and even React components for server configuration is bound to raise eyebrows. For me it comes down to preference, usability and how it looks. React Server is all about eliminating React boilerplate and easing the cognitive load of writing a server-side rendering server, so the last thing I wanted was a declarative and messy configuration.
+I know that some developers are not fond of JSX and prefer vanilla Javascript. My decision to use JSX and even React components for server configuration is bound to raise eyebrows. For me it comes down to preference, usability and how it looks. React-response is all about eliminating React boilerplate and easing the cognitive load of writing a server-side rendering server, so the last thing I wanted was a declarative and messy configuration.
 
-The very first thing I did with React Server was to design the user interface of the configuration. While the data is not naturally nested like React Router's routes, I feel that using JSX and React components to build the server configuration gives React Server a distinct "React identity". Rendering React components on the server should just be a matter of composing them into the server configuration. It is also very easy to see what is going on from a quick glance at the configuration tree, and in my opinion it is much better than plain Javascript objects.
+The very first thing I did with React-response was to design the user interface of the configuration. While the data is not naturally nested like React Router's routes, I feel that using JSX and React components to build the server configuration gives React-response a distinct "React identity". Rendering React components on the server should just be a matter of composing them into the server configuration. It is also very easy to see what is going on from a quick glance at the configuration tree, and in my opinion it is much better than plain Javascript objects.
 
 However, if you do not wish to use JSX, inspect the output of `createServer`. It should be rather simple to re-create that object structure without JSX. Note that the components, like `Middleware` and `Response`, directly apply middleware and handlers to the Express instance.
 
-Rest assured that I plan to fully support usage of React Server without React components, à la React Router. It just isn't a priority for the first few releases.
+Rest assured that I plan to fully support usage of React-response without React components, à la React Router. It just isn't a priority for the first few releases.
 
 # Getting started
 
-First, install React Server:
-`npm install --save react-server`
+First, install React-response:
+`npm install --save react-response`
 
-Make sure you have React Server's peerDependencies (react react-dom react-router express) installed. Also install any middleware you want to use through the components.
+Make sure you have React-response's peerDependencies (react react-dom react-router express) installed. Also install any middleware you want to use through the components.
 
 I do apologize for the number of dependencies. Its propbably nothing that you aren't already using though.
 
@@ -122,11 +129,11 @@ require('server.js') // Your server file
 
 Then run that file with Node.
 
-When run, React Server will output the URL where you can see your app in the console. By default that would be `http://localhost:3000`.
+When run, React-response will output the URL where you can see your app in the console. By default that would be `http://localhost:3000`.
 
 # Future plans
 
-This is but the very first release of React Server! Plans for the future include:
+This is but the very first release of React-response! Plans for the future include:
 
 - Template engines like Jade and EJS
 - Option to use something else than Express
@@ -150,7 +157,7 @@ This is but the very first release of React Server! Plans for the future include
         - *port*
             - Type: integer
             - Default: '3000'
-    - The wrapper component for React Server. This component instantiates `http` and `Express`.
+    - The wrapper component for React-response. This component instantiates `http` and `Express`.
 - `Route`
     - Props:
         - *path*
@@ -175,19 +182,19 @@ This is but the very first release of React Server! Plans for the future include
         - *responseHandler*
             - Type: function
             - Arguments: `renderProps`, `req`, `res`
-    - The Response component creates a route handler for rendering your app. The handler will hande the route specified by the `Route` component, or `get` on `/` by default. Without specifying a custom render function as a child to `Response`, React Server will simply render your React Router routes. In this case the props applied to your template is only `component`, which is your app rendered to a string.
+    - The Response component creates a route handler for rendering your app. The handler will hande the route specified by the `Route` component, or `get` on `/` by default. Without specifying a custom render function as a child to `Response`, React-response will simply render your React Router routes. In this case the props applied to your template is only `component`, which is your app rendered to a string.
 
 - `Middleware`
     - Props:
         - *use*
             - Type function (Express middleware)
             - Default: dummy middleware
-    - Directly applies the specified middleware into Express. Using this generic Middleware component you can accomplish many features that React Server does not currently cater to.
+    - Directly applies the specified middleware into Express. Using this generic Middleware component you can accomplish many features that React-response does not currently cater to.
 
     By inspecting the source code you might find out that the components can take more props than documented. These exist mainly for testing and decoupling purposes. Usage of undocumented props is not supported, but I am not your mother.
 
     # Test and build
 
-    I have a very simple React project set up in `/test/consumer` that demonstrates how to use React Server. `cd` into there and run `node ./consumerenv.js` to run the test app. Unit tests are located in `/test`and can be run with `gulp test`. This project uses Tape and Sinon for testing.
+    I have a very simple React project set up in `/test/consumer` that demonstrates how to use React-response. `cd` into there and run `node ./consumerenv.js` to run the test app. Unit tests are located in `/test`and can be run with `gulp test`. This project uses Tape and Sinon for testing.
 
     To build the app simply run `gulp build`.

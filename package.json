@@ -1,5 +1,5 @@
 {
-  "name": "react-server",
+  "name": "react-serve",
   "version": "0.0.1",
   "description": "React server-side rendering implementation with minimal configuration.",
   "main": "./lib/index.js",
