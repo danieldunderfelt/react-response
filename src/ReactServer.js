@@ -7,13 +7,13 @@ class ReactServer extends Component {
 
     static propTypes = {
         host: PropTypes.string.isRequired,
-        port: PropTypes.number.isRequired,
+        port: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
         serverApp: PropTypes.func.isRequired,
         server: PropTypes.object.isRequired
     };
 
     static defaultProps = {
-        host: '0.0.0.0',
+        host: 'localhost',
         port: 3000,
         protocol: 'http',
         server: { http: http.Server, https: https.Server },

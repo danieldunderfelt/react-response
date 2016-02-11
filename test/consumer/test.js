@@ -11,7 +11,7 @@ import { ReactServer, Template, Route, Response, serve, createServer } from '../
 import { Middleware, Static, Favicon } from '../../src/middleware'
 
 const server = createServer(
-    <ReactServer host="localhost" port={ 3000 }>
+    <ReactServer host="localhost" port="3000">
         <Route path="/" method="get">
             <Middleware use={ compression() }/>
             <Favicon path={ path.join(__dirname, 'helpers', 'favicon.ico') }/>
