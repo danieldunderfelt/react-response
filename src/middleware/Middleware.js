@@ -12,7 +12,10 @@ class Middleware extends React.Component {
 
     static buildServer(props, parent) {
 
-        parent.serverApp.use(parent.route.path, props.use)
+        parent.serverApp.use(
+            parent.route.path,
+            props.use
+        )
 
         return {
             middleware: {

@@ -12,17 +12,21 @@ import ReactDOM from 'react-dom/server'
  */
 class Html extends Component {
 
+    static propTypes = {
+        component: PropTypes.string
+    };
+
     render() {
         const { component } = this.props
 
         return (
-            <html lang="en-us">
-            <head>
-                <meta charSet="utf-8"/>
-            </head>
-            <body>
-            <div id="root" dangerouslySetInnerHTML={ { __html: component } }></div>
-            </body>
+            <html>
+                <head>
+                    <meta charSet="utf-8"/>
+                </head>
+                <body>
+                    <div id="root" dangerouslySetInnerHTML={ { __html: component } }></div>
+                </body>
             </html>
         )
     }

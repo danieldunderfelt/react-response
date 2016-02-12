@@ -5,28 +5,24 @@ import routes from './routes'
 import compression from 'compression'
 import { RouterContext } from 'react-router'
 
-import Html from './helpers/Html'
+import Html from './../../src/utils/Html'
 
-import { ReactServer, Template, Route, Response, serve, createServer } from '../../src'
+import { ReactServer, Route, Response, serve, createServer } from '../../src'
 import { Middleware, Static, Favicon } from '../../src/middleware'
+import { createReactRouterResponse } from '../../src/handlers/reactRouterResponse'
 
 const server = createServer(
-    <ReactServer host="localhost" port="3000">
-        <Route path="/" method="get">
+    <ReactServer>
+        <Route>
             <Middleware use={ compression() }/>
             <Favicon path={ path.join(__dirname, 'helpers', 'favicon.ico') }/>
             <Static path={ path.join(__dirname, 'helpers') }/>
-
-            <Template component={ Html }>
-                <Response routes={ routes }>
-                    {(renderProps, req, res) => {
-                        return { component: ReactDOM.renderToString(
-                            <RouterContext { ...renderProps } />
-                        ) }
-                    }}
-                </Response>
-            </Template>
         </Route>
+
+        <Response template={ Html } appHandler={ createReactRouterResponse(routes) }>
+            { (renderProps) => ({ component: ReactDOM.renderToString(<RouterContext { ...renderProps } /> ) }) }
+        </Response>
+
         <Route path="/api">
             <Static path={ path.join(__dirname, '..', 'static') }/>
         </Route>

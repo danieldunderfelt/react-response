@@ -1,27 +1,31 @@
 import React, { PropTypes, Component } from 'react'
 
-class Route extends Component {
+const factory = () => {
 
-    static propTypes = {
-        path: PropTypes.string.isRequired,
-        method: PropTypes.string.isRequired
-    };
+    const buildServer = (props) => ({
+        route: {
+            path: props.path,
+            method: props.method
+        },
+        children: props.children
+    })
 
-    static defaultProps = {
-        path: "/",
-        method: "get"
-    };
+    class Route extends Component {
 
-    static buildServer(props) {
+        static propTypes = {
+            path: PropTypes.string.isRequired,
+            method: PropTypes.string.isRequired
+        };
 
-        return {
-            route: {
-                path: props.path,
-                method: props.method
-            },
-            children: props.children
-        }
+        static defaultProps = {
+            path: "/",
+            method: "get"
+        };
+
+        static buildServer = buildServer;
     }
+
+    return Route
 }
 
-export default Route
+export default factory()

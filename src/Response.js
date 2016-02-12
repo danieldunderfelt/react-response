@@ -1,38 +1,39 @@
 import React, { PropTypes, Component } from 'react'
 import ReactDOM from 'react-dom/server'
 import { createSimpleResponse } from './handlers/simpleResponse'
-import ReactResponseGreeter from './utils/ReactServerGreeter'
+import ReactResponseGreeter from './utils/ReactResponseGreeter'
+import Html from './utils/Html'
 import invariant from 'invariant'
 
 const factory = () => {
 
-    const getTemplatePropsProvider = children => {
-        // If the passed child is a custom render function
-        if(typeof children === "function") {
-            return children
+    const defaultRenderingFunction = ReactElement => (renderProps, req, res) => ({
+        component: ReactDOM.renderToString(
+            React.cloneElement(ReactElement, { ...renderProps })
+        )
+    })
 
-        } else if(React.isValidElement(children)) {
-            // Otherwise it is the thing we want to render
-            return (renderProps, req, res) => ({
-                component: ReactDOM.renderToString(
-                    React.cloneElement(children, { ...renderProps })
-                )
-            })
+    const getTemplatePropsProvider = (children, renderFunction) => {
+
+        if(React.isValidElement(children)) {
+            // If it is the thing we want to render
+            return renderFunction(children)
         }
 
-        invariant(false, "Pass a render function or the element you want to render to Response as a child.")
+        // Otherwise we take it in good faith that it is a custom render function.
+        return children
     }
 
     const buildServer = (props, parent) => {
-        const { appHandler, template, children } = props
+        const { appHandler, template, children, renderFunction } = props
 
         const responseHandler = appHandler(
             template,
-            getTemplatePropsProvider(children)
+            getTemplatePropsProvider(children, renderFunction)
         )
 
         const route = typeof parent.route === "undefined" ?
-            props.route :
+            props :
             parent.route
 
         parent.serverApp[route.method](route.path, responseHandler)
@@ -47,18 +48,21 @@ const factory = () => {
     class Response extends Component {
 
         static propTypes = {
-            template: PropTypes.element.isRequired,
+            template: PropTypes.func.isRequired,
             path: PropTypes.string.isRequired,
             method: PropTypes.string.isRequired,
             children: PropTypes.oneOfType([PropTypes.func, PropTypes.element]).isRequired,
-            appHandler: PropTypes.func.isRequired
+            appHandler: PropTypes.func.isRequired,
+            renderFunction: PropTypes.func.isRequired
         };
 
         static defaultProps = {
             path: "/",
             method: "get",
+            template: Html,
             children: <ReactResponseGreeter />,
-            appHandler: createSimpleResponse()
+            appHandler: createSimpleResponse(),
+            renderFunction: defaultRenderingFunction
         };
 
         static buildServer = buildServer;
