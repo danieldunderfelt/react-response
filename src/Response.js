@@ -1,42 +1,39 @@
 import React, { PropTypes, Component } from 'react'
 import ReactDOM from 'react-dom/server'
-import { RouterContext } from 'react-router'
-import { appMiddleware } from './server/appMiddleware'
+import { createSimpleResponse } from './handlers/simpleResponse'
+import ReactResponseGreeter from './utils/ReactServerGreeter'
+import invariant from 'invariant'
 
-class Response extends Component {
+const factory = () => {
 
-    static propTypes = {
-        routes: PropTypes.object.isRequired,
-        path: PropTypes.string.isRequired,
-        method: PropTypes.string.isRequired,
-        children: PropTypes.func.isRequired,
-        appHandler: PropTypes.func.isRequired
-    };
+    const getTemplatePropsProvider = children => {
+        // If the passed child is a custom render function
+        if(typeof children === "function") {
+            return children
 
-    static defaultProps = {
-        path: "/",
-        method: "get",
-        children: Response.renderFn,
-        appHandler: appMiddleware
-    };
+        } else if(React.isValidElement(children)) {
+            // Otherwise it is the thing we want to render
+            return (renderProps, req, res) => ({
+                component: ReactDOM.renderToString(
+                    React.cloneElement(children, { ...renderProps })
+                )
+            })
+        }
 
-    static buildServer(props, parent) {
+        invariant(false, "Pass a render function or the element you want to render to Response as a child.")
+    }
 
-        const { appHandler, routes, children } = props
+    const buildServer = (props, parent) => {
+        const { appHandler, template, children } = props
 
         const responseHandler = appHandler(
-            routes,
-            parent.template.component,
-            children
+            template,
+            getTemplatePropsProvider(children)
         )
 
-        let { route } = parent
-
-        // If using the simplest "Hello world" config, the route has not been set.
-        // Then we need the default props from this component.
-        if(typeof route === 'undefined') {
-            route = props
-        }
+        const route = typeof parent.route === "undefined" ?
+            props.route :
+            parent.route
 
         parent.serverApp[route.method](route.path, responseHandler)
 
@@ -47,12 +44,27 @@ class Response extends Component {
         }
     }
 
-    static renderFn(renderProps, req, res) {
+    class Response extends Component {
 
-        return { component: ReactDOM.renderToString(
-            <RouterContext { ...renderProps } />
-        ) }
+        static propTypes = {
+            template: PropTypes.element.isRequired,
+            path: PropTypes.string.isRequired,
+            method: PropTypes.string.isRequired,
+            children: PropTypes.oneOfType([PropTypes.func, PropTypes.element]).isRequired,
+            appHandler: PropTypes.func.isRequired
+        };
+
+        static defaultProps = {
+            path: "/",
+            method: "get",
+            children: <ReactResponseGreeter />,
+            appHandler: createSimpleResponse()
+        };
+
+        static buildServer = buildServer;
     }
+
+    return Response
 }
 
-export default Response
+export default factory()

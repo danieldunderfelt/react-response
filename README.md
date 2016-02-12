@@ -49,7 +49,7 @@ import { ReactServer, Template, Route, Response, serve, createServer, Middleware
 /* Note that you need to install 'serve-favicon' and other middleware if you want to use them. */
 
 const server = createServer(
-    <ReactServer host="localhost" port={ 3000 }>
+    <ReactServer host="localhost" port="3000">
         <Route path="/" method="get">
 
             // All the middlewares! React-response ships with some commonly used ones.
