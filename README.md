@@ -8,13 +8,6 @@ The configuration of your React-response is done with familiar React components,
 
 > Production-ready stability is one of my end goals but we're still in the early days. Use in production at your own risk!
 
-Features
----
-
-- A new way to implement SSR using familiar React concepts
-- A fully-featured Express server under the hood
-- Less boilerplate
-
 What's it look like?
 ---
 
