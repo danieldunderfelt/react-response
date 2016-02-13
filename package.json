@@ -1,6 +1,6 @@
 {
   "name": "react-response",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "React server-side rendering implementation with minimal configuration.",
   "main": "./lib/index.js",
   "scripts": {
