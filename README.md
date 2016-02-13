@@ -2,7 +2,7 @@ React-response
 ===
 
 React-response provides an easy-to-use server-side rendering server for React.
-The goal of this project is to reduce the boilerplate you need for a universal React project. Instead of copy-pasting a server from somewhere, React-response makes it possible to quickly write a production-ready server-side React renderer yourself. React-response also aims to maintain the customizability of a normal Express server because every app has different needs.
+The goal of this project is to reduce the boilerplate you need for a universal React project. Instead of copy-pasting a server from somewhere, React-response makes it possible to quickly write a production-ready server-side React renderer yourself. This will enable you to focus on your app without worrying about how to implement server-side rendering.
 
 The configuration of your React-response is done with familiar React components, kind of like React Router's route configuration. Almost all of the props have sensible defaults, so for the simplest apps you really don't have to do a lot to get a server running.
 
@@ -14,15 +14,11 @@ What's it look like?
 Glad you asked. The simplest hello World with React-response looks like this:
 
 ```javascript
-import routes from './routes' // React-router routes
-import Html from './helpers/Html' // Your template component
-import { ReactServer, Template, Response, serve, createServer } from 'react-response'
+import { ReactServer, Response, serve, createServer } from 'react-response'
 
 const server = createServer(
     <ReactServer>
-        <Template component={ Html }>
-            <Response routes={ routes } />
-        </Template>
+        <Response />
     </ReactServer>
 )
 
@@ -30,49 +26,63 @@ serve(server)
 
 ```
 
-Compared to the novel you had to write (or copy-paste from a boilerplate) before, I'd say that's a pretty good improvement!
+Running that will display a built-in Hello World page in your browser at `localhost:3000`.
 
-As you may have noticed, the `<Response />` component consumes React Router routes. Yes, React Router is a peerDependency, along with React, React DOM and Express. I assume that most projects that need server-side rendering already uses React Router.
-
-> React-response is based on Express. If you're not using Express, rest assured that it is not suuuuper tightly coupled. I might eventually look at having interchangeable servers, but it is not a priority for now.
-
-That small example is all well and good for showing off, but next we'll have a look at how to customize React-response for your needs.
+The `ReactServer` component instantiates a new Express server. The `Response` component is responsible for rendering a React application at the specified Express route. The simplest example above demonstrates the built-in defaults, but most of React-response's behaviour is customizable. The full example illustrates all the ways you can customize React-response.
 
 ### The full example
 
 ```javascript
-import { RouterContext } from 'react-router' // Import if using a custom render function
+import { RouterContext } from 'react-router' // RouterContext is your root component if you're using React-router.
 import routes from './routes' // React-router routes
 import Html from './helpers/Html' // Your template component
-import { ReactServer, Template, Route, Response, serve, createServer, Middleware, Static, Favicon } from 'react-response'
+import ReactResponse from 'react-response'
+
+// Import all the things
+const {
+    ReactServer,
+    Route,
+    Response,
+    serve,
+    createServer,
+    Middleware,
+    Static,
+    Favicon,
+    createReactRouterResponse // Requires React-router to be installed in your project.
+} = ReactResponse
 
 /* Note that you need to install 'serve-favicon' and other middleware if you want to use them. */
 
 const server = createServer(
+    // Set basic server config on the ReactServer component.
     <ReactServer host="localhost" port="3000">
+        // This is an Express route with the default props. Middlewares need to be
+        // mounted inside a Route component.
         <Route path="/" method="get">
-
-            // All the middlewares! React-response ships with some commonly used ones.
+            // React-response ships with wrappers for some commonly used middleware.
             <Middleware use={ compression() }/>
             <Favicon path={ path.join(__dirname, '..', 'static', 'favicon.ico') }/>
             <Static path={ path.join(__dirname, '..', 'static') }/>
 
-            // Set your template component
-            <Template component={ Html }>
-                <Response routes={ routes }>
-                    // Custom render function for your Reduxes and whatnot
-                    {(renderProps, req, res) => {
+            // Set your template and appHandler.
+            // React-response uses simple built-in templates and handlers by default.
+            <Response template={ Html } appHandler={ createReactRouterResponse(routes) }>
+                // Pass the React component you want to render OR
+                // a custom render function as a child to Response.
 
-                        // Return props for the template component
-                        return { component: ReactDOM.renderToString(
-                            <RouterContext { ...renderProps } />
-                        ) }
-                    }}
-                </Response>
-            </Template>
+                {(renderProps, req, res) => {
+
+                    // Return a map of props for the template component. The Html component
+                    // takes one prop: `component` which should be a rendered React component.
+                    return { component: ReactDOM.renderToString(
+                        <RouterContext { ...renderProps } />
+                    ) }
+                }}
+            </Response>
         </Route>
-        <Route path="/api"> // many routes
+        <Route path="/api"> // Many routes
             <Static path={ path.join(__dirname, '..', 'static') }/>
+            <Middleware use={(req, res) => { /* Implement your APi proxy */ }} />
         </Route>
     </ReactServer>
 )
@@ -85,11 +95,46 @@ Alright, this is more like it! As you can see, with React-response we attach mid
 
 Express middleware is painless to use through the `<Middleware />` component. The middleware will be mounted on the route which the middleware component is a child of. Simply pass in a middleware function as the `use` prop. `Favicon` and `Static` middleware components ship with React-response. They are simple wrappers for the generic middleware component.
 
-The `<Response />` component will handle rendering of React Router's `<RouterContext />` by default. If you need to render something else, for example Redux's `<Provider>`, pass a callback function as a child to `<Response />` and take care of it there. If you use a custom render function, it is your responsibility to render the React component to a string.
+The `<Response />` component is where all the action happens. It receives your template component as a prop and the thing you want to render as a child. If you simply pass your app root component as a child to Response, Response will automatically render it to a string with ReactDOM. If you pass a function instead, it will be called with some props from the appHandler, as well as the request and response data from Express. This is called a custom render function.
 
-The return value from your custom render function should be a map of props that will be applied to your template component. This makes the render function a convenient place to fetch data and create your Redux store.
+The return value from your custom render function should be a map of props that will be applied to your template component. This is important!
 
-The whole React-response setup is fed into the `createServer` function. It traverses all the components and compiles a fully-featured Express server which you can feed to the `serve` function.
+React-response ships with two appHandlers; `simpleResponse` and `reactRouterResponse`. SimpleResponse will be used by default. Both modules export a factory function which should be called to produce the appHandler itself. This is your chance to supply additional props to the component that will be rendered! The reactRouterResponse factory expects your router config as its argument which will be used to serve your app. The simpleResponse factory simply splats any object you supply onto the rendered component.
+
+To illustrate this, an example of the simpleResponse:
+
+```javascript
+<Response appHandler={ createSimpleResponse({ foo: "bar" }) }>
+    <AppRoot />
+
+    /* EQUALS */
+
+    { renderProps => ({
+        component: ReactDOM.renderToString(<AppRoot { ...renderProps } />)
+    }) }
+</Response>
+```
+
+The custom render function in the above example will receive `{ foo: "bar" }` as the `renderProps` argument. If you simply pass your root component as Response's child, the renderProps will be applied to it.
+
+This is not very useful in the case of the `simpleResponse`. If you use `reactRouterResponse`, you give your route config to the factory and the handler outputs `renderProps` from React-router. An example:
+
+```javascript
+<Response appHandler={ createReactRouterResponse(routes) }>
+    <RouterContext />
+
+    /* EQUALS */
+
+    { renderProps => ({
+        component: ReactDOM.renderToString(<RouterContext { ...renderProps } />)
+    }) }
+</Response>
+```
+Note that `<RouterContext />` will initially complain about missing props as you start the server if you do not give it the renderProps right away. This is OK and won't hinder the functionality of your app.
+
+Again, remember to return *a map of props for the template component*. The simple Html skeleton that ships with React-response expects your stringified app as the `component` prop, as illustrated in the examples.
+
+The whole React-response setup is fed into the `createServer` function. It compiles a fully-featured Express server from the components which you can feed to the `serve` function.
 
 ### A note on JSX
 
@@ -106,11 +151,9 @@ Rest assured that I plan to fully support usage of React-response without React 
 First, install React-response:
 `npm install --save react-response`
 
-Make sure you have React-response's peerDependencies (react react-dom react-router express) installed. Also install any middleware you want to use through the components.
+Make sure you have React-response's peerDependencies (react react-dom express) installed. Also install any middleware you want to use through the components. Also be sure to have React-router installed if you want to use the React-router response handler.
 
-I do apologize for the number of dependencies. Its propbably nothing that you aren't already using though.
-
-Then, follow one of the examples above to set up your server config. When done, feed the config to `createServer` and the output of `createServer` into `serve`.
+Then, follow the examples above to set up your server config. When done, feed the config to `createServer` and the output of `createServer` into `serve`.
 
 Before unleashing `node` on your server file, keep in mind that you need Babel to transpile the JSX. I suggest using `babel-core/register` to accomplish this if you do not have transpiling enabled for your server-side code. Like this:
 
@@ -122,7 +165,7 @@ require('server.js') // Your server file
 
 Then run that file with Node.
 
-When run, React-response will output the URL where you can see your app in the console. By default that would be `http://localhost:3000`.
+When run, React-response will output the URL where you can see your app. By default that is `http://localhost:3000`.
 
 # Future plans
 
@@ -131,7 +174,6 @@ This is but the very first release of React-response! Plans for the future inclu
 - Template engines like Jade and EJS
 - Option to use something else than Express
 - Add more `Response` components for the following needs:
-    - Without a React Router dependency
     - Redux
     - Redux React Router
 - Production stability and more tests
@@ -160,34 +202,43 @@ This is but the very first release of React-response! Plans for the future inclu
             - Type: string,
             - Default: 'get'
     - This component establishes a route context for the application handler and middleware. If `get` requests to the `/` route is all you need to serve, you can skip the `Route` component. Everything mounted as children for this component will be served under the specified path.
-- `Template`
-    - Props:
-        - *component*
-            - Type: React component
-            - Default: none
-    - The Template component specifies the HTML template component you want to use for the route. This component will receive props from `Response`'s render function; only `component` by default. For now the only option is to use a React component, but I fully intend to make use of Express' native template engine capabilities to enable Jade, EJS and the rest. Stay tuned for future updates!
 - `Response`
     - Props:
-        - *routes*
-            - Type: React Router route configuration
-            - Default: none
+        - *template*
+            - Type: React component
+            - Default: simple React HTML template
+        - *appHandler*
+            - type: function
+            - default: `simpleResponse`
     - Children:
-        - *responseHandler*
+        - *custom render function*
             - Type: function
-            - Arguments: `renderProps`, `req`, `res`
-    - The Response component creates a route handler for rendering your app. The handler will hande the route specified by the `Route` component, or `get` on `/` by default. Without specifying a custom render function as a child to `Response`, React-response will simply render your React Router routes. In this case the props applied to your template is only `component`, which is your app rendered to a string.
-
+                - Arguments: `renderProps`, `req`, `res`
+        - **OR**
+        - *your app root element*
+            - Type: React element
+    - The Response component creates a route handler for rendering your app. The handler will handle the route specified by the `Route` component, or `get` on `/` by default. Without specifying a custom render function or your app root element as a child to `Response`, React-response will simply render a Hello World page.
 - `Middleware`
     - Props:
         - *use*
             - Type function (Express middleware)
             - Default: dummy middleware
     - Directly applies the specified middleware into Express. Using this generic Middleware component you can accomplish many features that React-response does not currently cater to.
+- `createReactRouterResponse`
+    - Arguments:
+        - React Router route configuration
+    - Returns:
+        - Response handler that uses React Router
+    - Make sure to have React Router installed if you use this!
+- `createSimpleResponse`
+    - Arguments:
+        - Object of props to apply to the component you are rendering
+    - Simply gives your component, stringified, to the template and sends that as the response.
 
-    By inspecting the source code you might find out that the components can take more props than documented. These exist mainly for testing and decoupling purposes. Usage of undocumented props is not supported, but I am not your mother.
+By inspecting the source code you might find out that the components can take more props than documented. These exist mainly for testing and decoupling purposes. Usage of undocumented props is not supported, but I am not your mother.
 
-    # Test and build
+# Test and build
 
-    I have a very simple React project set up in `/test/consumer` that demonstrates how to use React-response. `cd` into there and run `node ./consumerenv.js` to run the test app. Unit tests are located in `/test`and can be run with `gulp test`. This project uses Tape and Sinon for testing.
+I have a very simple React project set up in `/test/consumer` that demonstrates how to use React-response. `cd` into there and run `node ./consumerenv.js` to run the test app. Unit tests are located in `/test`and can be run with `gulp test`. This project uses Tape and Sinon for testing.
 
-    To build the app simply run `gulp build`.
+To build the library simply run `gulp build`.
