@@ -1,9 +1,25 @@
 import React from 'react'
 import ReactDOM from 'react-dom/server'
 import path from 'path'
-import routes from './routes'
+import routes, { Home } from './routes'
 import compression from 'compression'
 import { RouterContext } from 'react-router'
+
+
+class Test extends React.Component {
+
+    render() {
+
+        return (
+            <div>
+                <h1>
+                    Trolololo!
+                </h1>
+            </div>
+        )
+    }
+}
+
 
 import Html from './../../src/utils/Html'
 
@@ -22,7 +38,9 @@ const {
 
 const server = createServer(
     <ReactServer>
-        <Response />
+        <Response>
+            <Test />
+        </Response>
     </ReactServer>
 )
 
