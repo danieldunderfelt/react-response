@@ -32,8 +32,7 @@ const {
     createServer,
     Middleware,
     Static,
-    Favicon,
-    createReactRouterResponse
+    Favicon
 } = ReactResponse
 
 const server = createServer(
