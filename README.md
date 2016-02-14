@@ -6,7 +6,7 @@ The goal of this project is to reduce the boilerplate you need for a universal R
 
 The configuration of your React-response is done with familiar React components, kind of like React Router's route configuration. Almost all of the props have sensible defaults, so for the simplest apps you really don't have to do a lot to get a server running.
 
-> Production-ready stability is one of my end goals but we're still in the early days. Use in production at your own risk!
+> Production-ready stability is one of my end goals but we're still in the early days. Use in production at your own risk! If you do, do not hesitate to contact me with your experience.
 
 What's it look like?
 ---
@@ -38,7 +38,7 @@ import routes from './routes' // React-router routes
 import Html from './helpers/Html' // Your template component
 import ReactResponse from 'react-response'
 
-// Install the React router response if you use React-router
+// Install the React-router-response if you use React-router
 import createReactRouterResponse from 'react-response-router'
 
 // Import all the things
@@ -101,7 +101,7 @@ The `<Response />` component is where all the action happens. It receives your t
 
 The return value from your custom render function should be a map of props that will be applied to your template component. This is important!
 
-React-response ships with two handlers; `simpleResponse` and `reactRouterResponse`. SimpleResponse will be used by default. Both modules export a factory function which should be called to produce the handler itself. This is your chance to supply additional props to the component that will be rendered! The reactRouterResponse factory expects your router config as its argument which will be used to serve your app. The simpleResponse factory simply splats any object you supply onto the rendered component.
+React-response ships one handler, `simpleResponse`. SimpleResponse will be used by default. Both modules export a factory function which should be called to produce the handler itself. This is your chance to supply additional props to the component that will be rendered! The reactRouterResponse factory expects your router config as its argument which will be used to serve your app. The simpleResponse factory simply splats any object you supply onto the rendered component.
 
 To illustrate this, an example of the simpleResponse:
 
@@ -119,7 +119,7 @@ To illustrate this, an example of the simpleResponse:
 
 The custom render function in the above example will receive `{ foo: "bar" }` as the `renderProps` argument. If you simply pass your root component as Response's child, the renderProps will be applied to it.
 
-This is not very useful in the case of the `simpleResponse`. If you use `reactRouterResponse`, you give your route config to the factory and the handler outputs `renderProps` from React-router. An example:
+This is not very useful in the case of the `simpleResponse`. If you use `reactRouterResponse` (from the `react-response-router` package), you give your route config to the factory and the handler outputs `renderProps` from React-router. An example:
 
 ```javascript
 <Response handler={ createReactRouterResponse(routes) }>
