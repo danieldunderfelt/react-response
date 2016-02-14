@@ -153,7 +153,13 @@ Rest assured that I plan to fully support usage of React-response without React 
 First, install React-response:
 `npm install --save react-response`
 
-Make sure you have React-response's peerDependencies (react react-dom express) installed. Also install any middleware you want to use through the components. Also be sure to have React-router installed if you want to use the React-router response handler.
+Make sure you have React-response's peerDependencies (react react-dom express) installed. Also install any middleware you want to use through the components.
+
+If you are using React-router, install the [React-router response handler](https://github.com/danieldunderfelt/react-response-router) for React-response. This can be achieved with:
+
+`npm i react-response-router --save`
+
+The full example above uses it.
 
 Then, follow the examples above to set up your server config. When done, feed the config to `createServer` and the output of `createServer` into `serve`.
 
@@ -226,12 +232,6 @@ This is but the very first release of React-response! Plans for the future inclu
             - Type function (Express middleware)
             - Default: dummy middleware
     - Directly applies the specified middleware into Express. Using this generic Middleware component you can accomplish many features that React-response does not currently cater to.
-- `createReactRouterResponse`
-    - Arguments:
-        - React Router route configuration
-    - Returns:
-        - Response handler that uses React Router
-    - Make sure to have React Router installed if you use this!
 - `createSimpleResponse`
     - Arguments:
         - Object of props to apply to the component you are rendering
