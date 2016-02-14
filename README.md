@@ -175,6 +175,82 @@ Then run that file with Node.
 
 When run, React-response will output the URL where you can see your app. By default that is `http://localhost:3000`.
 
+# How do I...
+
+React-response was never meant to cover 100% of all use cases. I made it according to how I write universal React apps, but I have seen some projects that are simply out of React-response's scope. I am aiming for 80-90% of use cases. That said, React-response is quite accommodating as you can make your own response handlers and rendering functions. Also, many things seen in the `server.js` file of various projects can be moved elsewhere, for example into the root component. The server should only render your app into a template and send the response on its way. The rest can be accomplished elsewhere.
+
+### ... use Redux:
+
+Easily! You need a custom render function where you configure your store, set up the `<Provider />` and do data fetching. An example:
+
+```javascript
+// server.js
+<Response template={ YourTemplate } handler={ createReactRouterResponse(routes) }>
+    { (renderProps, req, res) => {
+        // If you use react-router-redux, create history for its router state tracking.
+        const history = createMemoryHistory(req.url)
+
+        // The function that returns your store
+        const store = configureStore({ initialState: {}, history })
+
+        // You can also use a Root component that composes the Provider and includes your DevTools.
+        const component = (
+            <Provider store={store}>
+                <RouterContext { ...renderProps }  />
+            </Provider>
+        )
+
+        // Return props for the template
+        return {
+            component,
+            store
+        }
+    }}
+</Response>
+
+// YourTemplate.js
+
+class Html extends Component {
+
+	render() {
+		const {store, component} = this.props
+		// First, render your app to a string. See, no need to do even this in server.js!
+		const content = component ? ReactDOM.renderToString(component) : ''
+
+		return (
+			<html lang="en-us">
+			<head>
+				<meta charSet="utf-8"/>
+			</head>
+			<body>
+			// Plop in your app
+			<div id="root" dangerouslySetInnerHTML={{__html: content}}></div>
+			// Get the state from your store and put it into the template serialized:
+			<script dangerouslySetInnerHTML={{ __html: `window.__data=${ JSON.stringify(store.getState())};` }} charSet="UTF-8" />
+			</body>
+			</html>
+		)
+	}
+}
+```
+
+You obviously also need to include your assets in that there Html template, but hopefully this illustrates how we can use Redux and also move some functionality away from the server file itself.
+
+### ... create my own response handler?
+
+Skipping over the othermost function, the factory, The response handler (reactRouterResponse for example) is a function that takes two functions as its arguments. The first one receives the template props from your rendering function and renders the template. It also receives the response object as its second argument. The second one is your custom rendering function, or the component you gave as a child to `<Response />` wrapped in the default render function.
+
+This function should return the route handler that will be attached to the Express route to handle the rendering of your app. Here is the response handler that ships with React-response:
+
+```javascript
+// 1: response handler factory creator, 2: response handler factory, 3: response handler. SEE?! EASY!
+export const createSimpleResponse = (renderProps = {}) => (renderTemplate, renderApp) => (req, res) => {
+    renderTemplate(renderApp(renderProps, req, res), res)
+}
+```
+
+Absent from the description above is the factory function (the one that takes `renderProps`). It is not strictly necessary in all cases, but it is a convenient way to inject stuff like React-router routes into the response handler scope. The `<Response />` component provides the `renderTemplate` and `renderApp` functions. The renderTemplate function does two things: set response status to 200, and sends the response with the stringified template containing your app. A better name for it might be something like `renderResponse`, which it was actually called before I changed it while writing this very chapter. Using your own template rendering function is not currently supported.
+
 # Future plans
 
 This is but the very first release of React-response! Plans for the future include:

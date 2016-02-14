@@ -1,3 +1,3 @@
-export const createSimpleResponse = (renderProps = {}) => (renderResponse, renderFunction) => (req, res) => {
-    renderResponse(renderFunction(renderProps, req, res), res)
+export const createSimpleResponse = (renderProps = {}) => (renderTemplate, renderApp) => (req, res) => {
+    renderTemplate(renderApp(renderProps, req, res), res)
 }
