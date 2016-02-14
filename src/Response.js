@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/server'
 import { createSimpleResponse } from './handlers/simpleResponse'
 import ReactResponseGreeter from './utils/ReactResponseGreeter'
 import Html from './utils/Html'
-import invariant from 'invariant'
+import { createTemplateString } from './utils/createTemplateString'
 
 const factory = () => {
 
@@ -13,7 +13,7 @@ const factory = () => {
         )
     })
 
-    const getTemplatePropsProvider = (children, renderFunction) => {
+    const createTemplatePropsProvider = (children, renderFunction) => {
 
         if(React.isValidElement(children)) {
             // If it is the thing we want to render
@@ -24,12 +24,16 @@ const factory = () => {
         return children
     }
 
+    const createRenderResponse = Template => (templateProps, res) => {
+        res.status(200).send(createTemplateString(templateProps, Template))
+    }
+
     const buildServer = (props, parent) => {
         const { appHandler, template, children, renderFunction } = props
 
         const responseHandler = appHandler(
-            template,
-            getTemplatePropsProvider(children, renderFunction)
+            createRenderResponse(template),
+            createTemplatePropsProvider(children, renderFunction)
         )
 
         const route = typeof parent.route === "undefined" ?
