@@ -11,37 +11,37 @@ test('Response has a buildServer method', t => {
     t.end()
 })
 
-test('Response runs the passed appHandler', t => {
-    const appHandler = sinon.spy()
+test('Response runs the passed handler', t => {
+    const handler = sinon.spy()
 
     const parent = {
         serverApp: {
-            get(path, handler) {}
+            get(path, routeHandler) {}
         }
     }
     const renderFn = sinon.stub()
 
     const el = (
         <Response
-            appHandler={ appHandler }
+            handler={ handler }
             children={ renderFn }
         />
     )
 
     Response.buildServer(el.props, parent)
 
-    t.ok(appHandler.calledOnce, 'The appHandler was called once.')
-    t.ok(appHandler.calledWith(sinon.match.func, renderFn),
-        'The appHandler was called with the correct arguments.')
+    t.ok(handler.calledOnce, 'The handler was called once.')
+    t.ok(handler.calledWith(sinon.match.func, renderFn),
+        'The handler was called with the correct arguments.')
 
     t.end()
 })
 
 test('Response applies the app handler to the Express route', t => {
-    const appHandler = sinon.stub()
+    const handler = sinon.stub()
     const responseHandler = sinon.stub()
 
-    appHandler.returns(responseHandler)
+    handler.returns(responseHandler)
 
     const parent = {
         serverApp: {
@@ -53,7 +53,7 @@ test('Response applies the app handler to the Express route', t => {
 
     const el = (
         <Response
-            appHandler={ appHandler }
+            handler={ handler }
         />
     )
 
@@ -67,7 +67,7 @@ test('Response applies the app handler to the Express route', t => {
 })
 
 test('Response creates a rendering function for child React elements', t => {
-    const appHandler = sinon.stub()
+    const handler = sinon.stub()
     const renderFunction = sinon.stub()
     renderFunction.returns('app rendered to string')
 
@@ -81,21 +81,21 @@ test('Response creates a rendering function for child React elements', t => {
     }
 
     const el = (
-        <Response template={ template } appHandler={ appHandler } renderFunction={ renderFunction }>
+        <Response template={ template } handler={ handler } renderFunction={ renderFunction }>
             { childComponent }
         </Response>
     )
 
     Response.buildServer(el.props, parent)
 
-    t.ok(appHandler.calledWith(sinon.match.func, 'app rendered to string'), 'handler called with rendering function for passed element.')
+    t.ok(handler.calledWith(sinon.match.func, 'app rendered to string'), 'handler called with rendering function for passed element.')
     t.ok(renderFunction.calledWith(childComponent), 'The render function was called with the passed child component.')
 
     t.end()
 })
 
 test('Response returns the rendering function if passed', t => {
-    const appHandler = sinon.stub()
+    const handler = sinon.stub()
     const template = sinon.stub()
     const renderingFn = sinon.stub()
 
@@ -106,14 +106,14 @@ test('Response returns the rendering function if passed', t => {
     }
 
     const el = (
-        <Response template={ template } appHandler={ appHandler }>
+        <Response template={ template } handler={ handler }>
             { renderingFn }
         </Response>
     )
 
     Response.buildServer(el.props, parent)
 
-    t.ok(appHandler.calledWith(sinon.match.func, renderingFn), 'handler called with custom rendering function.')
+    t.ok(handler.calledWith(sinon.match.func, renderingFn), 'handler called with custom rendering function.')
 
     t.end()
 })

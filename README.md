@@ -38,6 +38,9 @@ import routes from './routes' // React-router routes
 import Html from './helpers/Html' // Your template component
 import ReactResponse from 'react-response'
 
+// Install the React router response if you use React-router
+import createReactRouterResponse from 'react-response-router'
+
 // Import all the things
 const {
     ReactServer,
@@ -48,7 +51,6 @@ const {
     Middleware,
     Static,
     Favicon,
-    createReactRouterResponse // Requires React-router to be installed in your project.
 } = ReactResponse
 
 /* Note that you need to install 'serve-favicon' and other middleware if you want to use them. */
@@ -64,9 +66,9 @@ const server = createServer(
             <Favicon path={ path.join(__dirname, '..', 'static', 'favicon.ico') }/>
             <Static path={ path.join(__dirname, '..', 'static') }/>
 
-            // Set your template and appHandler.
+            // Set your template and handler.
             // React-response uses simple built-in templates and handlers by default.
-            <Response template={ Html } appHandler={ createReactRouterResponse(routes) }>
+            <Response template={ Html } handler={ createReactRouterResponse(routes) }>
                 // Pass the React component you want to render OR
                 // a custom render function as a child to Response.
 
@@ -95,16 +97,16 @@ Alright, this is more like it! As you can see, with React-response we attach mid
 
 Express middleware is painless to use through the `<Middleware />` component. The middleware will be mounted on the route which the middleware component is a child of. Simply pass in a middleware function as the `use` prop. `Favicon` and `Static` middleware components ship with React-response. They are simple wrappers for the generic middleware component.
 
-The `<Response />` component is where all the action happens. It receives your template component as a prop and the thing you want to render as a child. If you simply pass your app root component as a child to Response, Response will automatically render it to a string with ReactDOM. If you pass a function instead, it will be called with some props from the appHandler, as well as the request and response data from Express. This is called a custom render function.
+The `<Response />` component is where all the action happens. It receives your template component as a prop and the thing you want to render as a child. If you simply pass your app root component as a child to Response, Response will automatically render it to a string with ReactDOM. If you pass a function instead, it will be called with some props from the handler, as well as the request and response data from Express. This is called a custom render function.
 
 The return value from your custom render function should be a map of props that will be applied to your template component. This is important!
 
-React-response ships with two appHandlers; `simpleResponse` and `reactRouterResponse`. SimpleResponse will be used by default. Both modules export a factory function which should be called to produce the appHandler itself. This is your chance to supply additional props to the component that will be rendered! The reactRouterResponse factory expects your router config as its argument which will be used to serve your app. The simpleResponse factory simply splats any object you supply onto the rendered component.
+React-response ships with two handlers; `simpleResponse` and `reactRouterResponse`. SimpleResponse will be used by default. Both modules export a factory function which should be called to produce the handler itself. This is your chance to supply additional props to the component that will be rendered! The reactRouterResponse factory expects your router config as its argument which will be used to serve your app. The simpleResponse factory simply splats any object you supply onto the rendered component.
 
 To illustrate this, an example of the simpleResponse:
 
 ```javascript
-<Response appHandler={ createSimpleResponse({ foo: "bar" }) }>
+<Response handler={ createSimpleResponse({ foo: "bar" }) }>
     <AppRoot />
 
     /* EQUALS */
@@ -120,7 +122,7 @@ The custom render function in the above example will receive `{ foo: "bar" }` as
 This is not very useful in the case of the `simpleResponse`. If you use `reactRouterResponse`, you give your route config to the factory and the handler outputs `renderProps` from React-router. An example:
 
 ```javascript
-<Response appHandler={ createReactRouterResponse(routes) }>
+<Response handler={ createReactRouterResponse(routes) }>
     <RouterContext />
 
     /* EQUALS */
@@ -207,7 +209,7 @@ This is but the very first release of React-response! Plans for the future inclu
         - *template*
             - Type: React component
             - Default: simple React HTML template
-        - *appHandler*
+        - *handler*
             - type: function
             - default: `simpleResponse`
     - Children:
@@ -242,3 +244,7 @@ By inspecting the source code you might find out that the components can take mo
 I have a very simple React project set up in `/test/consumer` that demonstrates how to use React-response. `cd` into there and run `node ./consumerenv.js` to run the test app. Unit tests are located in `/test`and can be run with `gulp test`. This project uses Tape and Sinon for testing.
 
 To build the library simply run `gulp build`.
+
+# Collaboration
+
+PR's welcome! Please add tests for all changes and follow the general coding style. Semicolons are banned ;)

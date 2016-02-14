@@ -29,9 +29,9 @@ const factory = () => {
     }
 
     const buildServer = (props, parent) => {
-        const { appHandler, template, children, renderFunction } = props
+        const { handler, template, children, renderFunction } = props
 
-        const responseHandler = appHandler(
+        const responseHandler = handler(
             createRenderResponse(template),
             createTemplatePropsProvider(children, renderFunction)
         )
@@ -56,7 +56,7 @@ const factory = () => {
             path: PropTypes.string.isRequired,
             method: PropTypes.string.isRequired,
             children: PropTypes.oneOfType([PropTypes.func, PropTypes.element]).isRequired,
-            appHandler: PropTypes.func.isRequired,
+            handler: PropTypes.func.isRequired,
             renderFunction: PropTypes.func.isRequired
         };
 
@@ -65,7 +65,7 @@ const factory = () => {
             method: "get",
             template: Html,
             children: <ReactResponseGreeter />,
-            appHandler: createSimpleResponse(),
+            handler: createSimpleResponse(),
             renderFunction: defaultRenderingFunction
         };
 
