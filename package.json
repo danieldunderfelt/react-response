@@ -31,7 +31,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/danieldunderfelt/react-server/issues"
+    "url": "https://github.com/danieldunderfelt/react-response/issues"
   },
   "files": [
     "LICENSE",
@@ -40,7 +40,7 @@
     "lib",
     "dist"
   ],
-  "homepage": "https://github.com/danieldunderfelt/react-server",
+  "homepage": "https://github.com/danieldunderfelt/react-response",
   "devDependencies": {
     "babel": "^6.3.26",
     "babel-core": "^6.4.0",
@@ -69,7 +69,7 @@
     "tape": "^4.4.0"
   },
   "library": {
-    "name": "react-server",
+    "name": "react-response",
     "entry": "index.js"
   },
   "peerDependencies": {
